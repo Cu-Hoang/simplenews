@@ -1,5 +1,5 @@
 node_modules
-.nx/
+.nx
 **/dist
 .env
 .env.local

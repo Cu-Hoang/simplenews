@@ -1,4 +1,5 @@
 import nx from "@nx/eslint-plugin";
+import prettierPlugin from "eslint-plugin-prettier";
 
 export default [
     ...nx.configs["flat/base"],
@@ -47,7 +48,16 @@ export default [
             "**/*.cjs",
             "**/*.mjs"
         ],
+        plugins: {
+            prettier: prettierPlugin 
+        },
         // Override or add rules here
-        rules: {}
+        rules: {
+            ...nx.configs["flat/base"].rules,
+            ...nx.configs["flat/typescript"].rules,
+            ...nx.configs["flat/javascript"].rules,
+            "prettier/prettier": "error",
+            "no-console": "warn" 
+        }
     }
 ];

@@ -1,0 +1,9 @@
+# Add files here to ignore them from prettier formatting
+
+**/dist
+.nx/
+**/eslint.config.mjs
+jest.config.ts
+jest.config.js
+jest.preset.js
+**/webpack.config.js

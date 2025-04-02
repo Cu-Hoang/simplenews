@@ -1,18 +1,13 @@
 name: ci
 on:
   push:
-    branches: 
-    - dev
-
   pull_request:
-    branches:
-    - dev
-
-  paths:
-      - 'apps/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/ci.yaml'
+    branches: [ dev ]
+    paths:
+    - 'apps/**'
+    - 'package.json'
+    - 'package-lock.json'
+    - '.github/workflows/ci.yaml'
 
 jobs:
   build:

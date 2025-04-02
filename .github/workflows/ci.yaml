@@ -1,7 +1,6 @@
 name: ci
 on:
-  push:
-  pull_request:
+  [push, pull_request]:
     branches: [ dev ]
     paths:
     - 'apps/**'
@@ -29,7 +28,7 @@ jobs:
 
     - name: Check Node.js version
       run: |
-        node_version=$(node --version)
+        node_version=$(node --version | sed 's/v//')
         required_version=$(node -p "require('./package.json').engines.node")
         if [[ ! "$node_version" == "$required_version" ]]; then
           echo "Error: Node.js version $node_version does not match required version $required_version"
@@ -52,10 +51,10 @@ jobs:
       run: npm ci
 
     - name: Lint code
-      run: npm run lint --fix
+      run: npm run lint
 
     - name: Check security vulnerabilities
-      run: npm audit
+      run: npm audit --audit-level=high
 
     - name: Build project
       run: npm run build

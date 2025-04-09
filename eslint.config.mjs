@@ -57,7 +57,7 @@ export default [
             ...nx.configs["flat/typescript"].rules,
             ...nx.configs["flat/javascript"].rules,
             "prettier/prettier": "error",
-            "no-console": "warn" 
+            "no-console": "warn",
         }
     }
 ];

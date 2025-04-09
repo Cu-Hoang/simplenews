@@ -1,8 +1,5 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { HttpExceptionFilter } from '../../../libs/common/src/lib/http-exception.filter';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { UserModule } from './app/user/user.module';
@@ -10,6 +7,7 @@ import { UserModule } from './app/user/user.module';
 async function bootstrap() {
   const app = await NestFactory.create(UserModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalFilters(new HttpExceptionFilter());
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3001;

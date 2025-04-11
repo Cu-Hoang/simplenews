@@ -14,7 +14,7 @@ import { UserResponse } from './dto/user.response.dto';
 import { UserMapper } from './user.mapper';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserRequest } from './dto/update-user.request.dto';
-import { UpdateUserEmailRequest } from './dto/update-email.request.dto';
+import { UpdateUserEmailRequest } from './dto/update-user-email.request.dto';
 
 @Injectable()
 export class UserService {

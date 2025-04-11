@@ -5,7 +5,7 @@ import { UserService } from './user.service';
 import { CreateUserRequest } from './dto/create-user.request.dto';
 import { UserResponse } from './dto/user.response.dto';
 import { UpdateUserRequest } from './dto/update-user.request.dto';
-import { UpdateUserEmailRequest } from './dto/update-email.request.dto';
+import { UpdateUserEmailRequest } from './dto/update-user-email.request.dto';
 
 @Controller('users')
 export class UserController {

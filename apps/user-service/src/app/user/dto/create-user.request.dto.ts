@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { Match } from '../match.decorator';
 
 export class CreateUserRequest {
   @IsOptional()
@@ -19,7 +20,14 @@ export class CreateUserRequest {
 
   @IsString()
   @MinLength(6)
-  password: string;
+  @MaxLength(20)
+  readonly password: string;
+
+  @IsString()
+  @MinLength(6)
+  @MaxLength(20)
+  @Match('password')
+  readonly passwordConfirm: string;
 
   @IsOptional()
   @IsString()

@@ -9,10 +9,11 @@ import {
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUser } from './dto/create-user.request.dto';
+import { CreateUser, CreateUserRequest } from './dto/create-user.request.dto';
 import { UserResponse } from './dto/user.response.dto';
 import { UserMapper } from './user.mapper';
 import * as bcrypt from 'bcrypt';
+import { UpdateUserRequest } from './dto/update-user.request.dto';
 
 @Injectable()
 export class UserService {
@@ -22,9 +23,9 @@ export class UserService {
     private readonly userMapper: UserMapper,
   ) {}
 
-  async create(createUser: CreateUser): Promise<ResonseEntity<UserResponse>> {
+  async create(request: CreateUserRequest): Promise<ResonseEntity<UserResponse>> {
     try {
-      const user = this.userMapper.toUser(createUser);
+      const user = this.userMapper.toUser(request);
       const salt = await bcrypt.genSalt();
       const hashPassword = await bcrypt.hash(user.password, salt);
       user.password = hashPassword;
@@ -37,6 +38,22 @@ export class UserService {
       if (error.code == 23505) {
         throw new HttpException('Email already exists', HttpStatus.CONFLICT);
       }
+      throw new InternalServerErrorException('Something went wrong, Try again!');
+    }
+  }
+
+  async update(id: string, request: UpdateUserRequest): Promise<ResonseEntity<UserResponse>> {
+    try {
+      const user = await this.userRepository.findOneBy({ id });
+      if (!user) throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+      const updatedUser = Object.assign(user, request);
+      return new ResonseEntity(
+        200,
+        'Updated user successfully',
+        this.userMapper.toUserResponse(await this.userRepository.save(updatedUser)),
+      );
+    } catch (error: any) {
+      if (error instanceof HttpException) throw error;
       throw new InternalServerErrorException('Something went wrong, Try again!');
     }
   }

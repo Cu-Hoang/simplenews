@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUser } from './dto/create-user.request.dto';
+import { CreateUserRequest } from './dto/create-user.request.dto';
 import { UserResponse } from './dto/user.response.dto';
 import { User } from './user.entity';
 
 @Injectable()
 export class UserMapper {
-  toUser(createUser: CreateUser): User {
+  toUser(request: CreateUserRequest): User {
     const user = new User();
-    user.firstname = createUser.firstname ?? '';
-    user.lastname = createUser.lastname ?? '';
-    user.email = createUser.email;
-    user.password = createUser.password;
-    user.avatarUrl = createUser.avatarUrl ?? '';
+    user.firstname = request.firstname ?? '';
+    user.lastname = request.lastname ?? '';
+    user.email = request.email;
+    user.password = request.password;
+    user.avatarUrl = request.avatarUrl ?? '';
     return user;
   }
 

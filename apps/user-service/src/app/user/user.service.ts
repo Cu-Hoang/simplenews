@@ -15,6 +15,7 @@ import { UserMapper } from './user.mapper';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserRequest } from './dto/update-user.request.dto';
 import { UpdateUserEmailRequest } from './dto/update-user-email.request.dto';
+import { UpdateUserPasswordRequest } from './dto/update-user-password.request.dto';
 
 @Injectable()
 export class UserService {
@@ -72,6 +73,27 @@ export class UserService {
         200,
         'Updated user email successfully',
         this.userMapper.toUserResponse(await this.userRepository.save(originalUser)),
+      );
+    } catch (error: any) {
+      if (error instanceof HttpException) throw error;
+      throw new InternalServerErrorException('Something went wrong, Try again!');
+    }
+  }
+
+  async updatePassword(
+    id: string,
+    request: UpdateUserPasswordRequest,
+  ): Promise<ResonseEntity<UserResponse>> {
+    try {
+      const user = await this.userRepository.findOneBy({ id });
+      if (!user) throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+      const salt = await bcrypt.genSalt();
+      const hashPassword = await bcrypt.hash(request.password, salt);
+      user.password = hashPassword;
+      return new ResonseEntity(
+        200,
+        'Updated user password successfully',
+        this.userMapper.toUserResponse(await this.userRepository.save(user)),
       );
     } catch (error: any) {
       if (error instanceof HttpException) throw error;

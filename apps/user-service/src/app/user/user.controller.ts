@@ -6,6 +6,7 @@ import { CreateUserRequest } from './dto/create-user.request.dto';
 import { UserResponse } from './dto/user.response.dto';
 import { UpdateUserRequest } from './dto/update-user.request.dto';
 import { UpdateUserEmailRequest } from './dto/update-user-email.request.dto';
+import { UpdateUserPasswordRequest } from './dto/update-user-password.request.dto';
 
 @Controller('users')
 export class UserController {
@@ -30,6 +31,14 @@ export class UserController {
     @Body() request: UpdateUserEmailRequest,
   ): Promise<ResonseEntity<UserResponse>> {
     return await this.userService.updateEmail(id, request);
+  }
+
+  @Put('/update/password/:id')
+  async updatePassword(
+    @Param('id') id: string,
+    @Body() request: UpdateUserPasswordRequest,
+  ): Promise<ResonseEntity<UserResponse>> {
+    return await this.userService.updatePassword(id, request);
   }
 
   @Get()

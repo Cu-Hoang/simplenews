@@ -9,11 +9,12 @@ import {
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUser, CreateUserRequest } from './dto/create-user.request.dto';
+import { CreateUserRequest } from './dto/create-user.request.dto';
 import { UserResponse } from './dto/user.response.dto';
 import { UserMapper } from './user.mapper';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserRequest } from './dto/update-user.request.dto';
+import { UpdateUserEmailRequest } from './dto/update-email.request.dto';
 
 @Injectable()
 export class UserService {
@@ -35,9 +36,7 @@ export class UserService {
         this.userMapper.toUserResponse(await this.userRepository.save(user)),
       );
     } catch (error: any) {
-      if (error.code == 23505) {
-        throw new HttpException('Email already exists', HttpStatus.CONFLICT);
-      }
+      if (error.code == 23505) throw new HttpException('Email already exists', HttpStatus.CONFLICT);
       throw new InternalServerErrorException('Something went wrong, Try again!');
     }
   }
@@ -51,6 +50,28 @@ export class UserService {
         200,
         'Updated user successfully',
         this.userMapper.toUserResponse(await this.userRepository.save(updatedUser)),
+      );
+    } catch (error: any) {
+      if (error instanceof HttpException) throw error;
+      throw new InternalServerErrorException('Something went wrong, Try again!');
+    }
+  }
+
+  async updateEmail(
+    id: string,
+    request: UpdateUserEmailRequest,
+  ): Promise<ResonseEntity<UserResponse>> {
+    try {
+      const originalUser = await this.userRepository.findOneBy({ id });
+      if (!originalUser) throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+      const newUser = await this.userRepository.findOneBy({ email: request.email });
+      if (newUser && newUser.id != id)
+        throw new HttpException('Email already exists', HttpStatus.CONFLICT);
+      originalUser.email = request.email;
+      return new ResonseEntity(
+        200,
+        'Updated user email successfully',
+        this.userMapper.toUserResponse(await this.userRepository.save(originalUser)),
       );
     } catch (error: any) {
       if (error instanceof HttpException) throw error;

@@ -105,10 +105,25 @@ export class UserService {
     try {
       return new ResonseEntity(
         200,
-        'Get all users successfully',
+        'Got all users successfully',
         (await this.userRepository.find()).map((x) => this.userMapper.toUserResponse(x)),
       );
     } catch (error: any) {
+      throw new InternalServerErrorException('Something went wrong, Try again!');
+    }
+  }
+
+  async getById(id: string): Promise<ResonseEntity<UserResponse>> {
+    try {
+      const user = await this.userRepository.findOneBy({ id });
+      if (!user) if (!user) throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+      return new ResonseEntity(
+        200,
+        'Got user by id successfully',
+        this.userMapper.toUserResponse(user),
+      );
+    } catch (error: any) {
+      if (error instanceof HttpException) throw error;
       throw new InternalServerErrorException('Something went wrong, Try again!');
     }
   }

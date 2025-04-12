@@ -46,6 +46,11 @@ export class UserController {
     return await this.userService.getAll();
   }
 
+  @Get('/:id')
+  async getById(@Param('id') id: string): Promise<ResonseEntity<UserResponse>> {
+    return await this.userService.getById(id);
+  }
+
   @Get()
   getData() {
     return this.userService.getData();

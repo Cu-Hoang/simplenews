@@ -101,6 +101,18 @@ export class UserService {
     }
   }
 
+  async getAll(): Promise<ResonseEntity<UserResponse[]>> {
+    try {
+      return new ResonseEntity(
+        200,
+        'Get all users successfully',
+        (await this.userRepository.find()).map((x) => this.userMapper.toUserResponse(x)),
+      );
+    } catch (error: any) {
+      throw new InternalServerErrorException('Something went wrong, Try again!');
+    }
+  }
+
   getData(): { message: string } {
     return { message: 'Hello API' };
   }

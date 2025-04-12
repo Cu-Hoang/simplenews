@@ -42,6 +42,11 @@ export class UserController {
   }
 
   @Get()
+  async getAll(): Promise<ResonseEntity<UserResponse[]>> {
+    return await this.userService.getAll();
+  }
+
+  @Get()
   getData() {
     return this.userService.getData();
   }

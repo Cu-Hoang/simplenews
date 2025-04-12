@@ -20,12 +20,20 @@
   "private": true,
   "dependencies": {
     "@nestjs/common": "^11.0.12",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.12",
     "@nestjs/microservices": "^11.0.12",
     "@nestjs/platform-express": "^11.0.12",
+    "@nestjs/typeorm": "^11.0.0",
     "axios": "^1.6.0",
+    "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "pg": "^8.14.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "typeorm": "^0.3.22",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
@@ -46,6 +54,7 @@
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
     "@swc/jest": "~0.2.36",
+    "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.12",
     "@types/node": "~18.16.9",
     "eslint": "^9.8.0",
@@ -65,6 +74,7 @@
     "webpack-cli": "^5.1.4"
   },
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "libs/*"
   ]
 }

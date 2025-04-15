@@ -66,8 +66,7 @@ export class UserService {
 
   async getById(id: string): Promise<UserResponse> {
     const user = await this.userRepository.findOneBy({ id });
-    if (!user)
-      if (!user) throw new RpcException({ statusCode: 400, message: 'User does not exist' });
+    if (!user) throw new RpcException({ statusCode: 400, message: 'User does not exist' });
     return this.userMapper.toUserResponse(user);
   }
 

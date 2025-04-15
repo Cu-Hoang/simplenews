@@ -26,6 +26,9 @@
           "configName": "tsconfig.lib.json",
           "buildDepsName": "build-deps",
           "watchDepsName": "watch-deps"
+        },
+        "sync": {
+          "applyChanges": true
         }
       }
     },

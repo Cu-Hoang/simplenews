@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserRequest } from './dto/create-user.request.dto';
-import { UserResponse } from './dto/user.response.dto';
+import { CreateUserRequest, UserResponse } from '@simplenews/common';
 import { User } from './user.entity';
 
 @Injectable()

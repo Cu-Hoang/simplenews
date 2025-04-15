@@ -26,9 +26,11 @@
           "configName": "tsconfig.lib.json",
           "buildDepsName": "build-deps",
           "watchDepsName": "watch-deps"
+        },
+        "sync": {
+          "applyChanges": true
         }
-      },
-      "exclude": ["libs/common/*"]
+      }
     },
     {
       "plugin": "@nx/webpack/plugin",
@@ -60,12 +62,18 @@
         "typecheck": {
           "targetName": "typecheck"
         }
-      }
+      },
+      "exclude": ["libs/common/*"]
     }
   ],
   "targetDefaults": {
     "test": {
       "dependsOn": ["^build"]
+    }
+  },
+  "release": {
+    "version": {
+      "preVersionCommand": "npx nx run-many -t build"
     }
   }
 }

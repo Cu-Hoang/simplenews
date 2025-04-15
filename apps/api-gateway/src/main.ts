@@ -3,12 +3,29 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common';
+import { BadRequestException, Logger, ValidationError, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { AllRpcExceptionFilter } from './app/all-rpc-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      exceptionFactory: (errors: ValidationError[]) => {
+        const messages = errors.map((error) => Object.values(error.constraints || {})).flat();
+
+        return new BadRequestException({
+          statusCode: 400,
+          message: messages,
+        });
+      },
+    }),
+  );
+  app.useGlobalFilters(new AllRpcExceptionFilter());
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3000;

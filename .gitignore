@@ -7,3 +7,5 @@ node_modules
 .env.production
 test-output
 **/.env
+.verdaccio
+tmp/libs/common/build

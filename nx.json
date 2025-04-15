@@ -27,8 +27,7 @@
           "buildDepsName": "build-deps",
           "watchDepsName": "watch-deps"
         }
-      },
-      "exclude": ["libs/common/*"]
+      }
     },
     {
       "plugin": "@nx/webpack/plugin",
@@ -60,12 +59,18 @@
         "typecheck": {
           "targetName": "typecheck"
         }
-      }
+      },
+      "exclude": ["libs/common/*"]
     }
   ],
   "targetDefaults": {
     "test": {
       "dependsOn": ["^build"]
+    }
+  },
+  "release": {
+    "version": {
+      "preVersionCommand": "npx nx run-many -t build"
     }
   }
 }

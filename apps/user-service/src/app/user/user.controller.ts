@@ -1,53 +1,53 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ResonseEntity } from '../../../../../libs/common/src/lib/response-entity.dto';
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserRequest } from './dto/create-user.request.dto';
-import { UserResponse } from './dto/user.response.dto';
-import { UpdateUserRequest } from './dto/update-user.request.dto';
-import { UpdateUserEmailRequest } from './dto/update-user-email.request.dto';
-import { UpdateUserPasswordRequest } from './dto/update-user-password.request.dto';
+import {
+  UserResponse,
+  CreateUserRequest,
+  UpdateUserRequest,
+  UpdateUserEmailRequest,
+  UpdateUserPasswordRequest,
+} from '@simplenews/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/register')
-  async create(@Body() request: CreateUserRequest): Promise<ResonseEntity<UserResponse>> {
-    return await this.userService.create(request);
+  @MessagePattern({ cmd: 'register' })
+  async create(@Payload() data: CreateUserRequest): Promise<UserResponse> {
+    return await this.userService.create(data);
   }
 
-  @Patch('/update/:id')
-  async update(
-    @Param('id') id: string,
-    @Body() request: UpdateUserRequest,
-  ): Promise<ResonseEntity<UserResponse>> {
+  @MessagePattern({ cmd: 'update user' })
+  async update(@Payload() data: { id: string; request: UpdateUserRequest }): Promise<UserResponse> {
+    const { id, request } = data;
     return await this.userService.update(id, request);
   }
 
-  @Put('/update/email/:id')
+  @MessagePattern({ cmd: 'update user email' })
   async updateEmail(
-    @Param('id') id: string,
-    @Body() request: UpdateUserEmailRequest,
-  ): Promise<ResonseEntity<UserResponse>> {
+    @Payload() data: { id: string; request: UpdateUserEmailRequest },
+  ): Promise<UserResponse> {
+    const { id, request } = data;
     return await this.userService.updateEmail(id, request);
   }
 
-  @Put('/update/password/:id')
+  @MessagePattern({ cmd: 'update user password' })
   async updatePassword(
-    @Param('id') id: string,
-    @Body() request: UpdateUserPasswordRequest,
-  ): Promise<ResonseEntity<UserResponse>> {
+    @Payload() data: { id: string; request: UpdateUserPasswordRequest },
+  ): Promise<UserResponse> {
+    const { id, request } = data;
     return await this.userService.updatePassword(id, request);
   }
 
-  @Get()
-  async getAll(): Promise<ResonseEntity<UserResponse[]>> {
+  @MessagePattern({ cmd: 'get all users' })
+  async getAll(): Promise<UserResponse[]> {
     return await this.userService.getAll();
   }
 
-  @Get('/:id')
-  async getById(@Param('id') id: string): Promise<ResonseEntity<UserResponse>> {
+  @MessagePattern({ cmd: 'get user by id' })
+  async getById(@Payload() data: { id: string }): Promise<UserResponse> {
+    const { id } = data;
     return await this.userService.getById(id);
   }
 

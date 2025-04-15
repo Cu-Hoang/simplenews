@@ -20,7 +20,8 @@
     "customConditions": ["development"],
     "baseUrl": ".",
     "paths": {
-      "@simplenews/common": ["libs/common/src/index.ts"]
-    }
+      "@simplenews/common": ["libs/common/src/index.ts"],
+      "@simplenews/common/*": ["libs/common/src/lib/*"]
+    },
   }
 }

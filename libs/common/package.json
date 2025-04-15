@@ -1,16 +1,42 @@
 {
   "name": "@simplenews/common",
   "version": "0.0.1",
-  "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "../../libs/common/src/index.js",
+  "module": "./dist/index.js",
+  "types": "../../libs/common/src/index.d.ts",
   "exports": {
     ".": {
       "types": "./src/index.ts",
       "import": "./src/index.ts",
-      "default": "./src/index.ts"
+      "default": "./src/index.ts",
+      "development": "./src/index.ts"
     },
     "./package.json": "./package.json"
   },
-  "dependencies": {}
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo"
+  ],
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "dist/libs/common",
+          "tsConfig": "libs/common/tsconfig.lib.json",
+          "packageJson": "libs/common/package.json",
+          "main": "libs/common/src/index.ts",
+          "assets": [
+            "libs/common/*.md"
+          ]
+        }
+      }
+    }
+  }
 }

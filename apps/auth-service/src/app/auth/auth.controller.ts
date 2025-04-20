@@ -1,9 +1,23 @@
 import { Controller, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { LoginResponse } from '@simplenews/common';
 
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @MessagePattern({ cmd: 'authenticate' })
+  async authenticate(@Payload() data: { access_token: string }): Promise<any> {
+    const { access_token } = data;
+    return await this.authService.authenticate(access_token);
+  }
+
+  @MessagePattern({ cmd: 'login' })
+  async login(@Payload() data: { email: string; password: string }): Promise<LoginResponse> {
+    const { email, password } = data;
+    return await this.authService.login(email, password);
+  }
 
   @Get()
   getData() {

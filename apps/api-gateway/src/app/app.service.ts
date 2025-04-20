@@ -7,12 +7,18 @@ import {
   UpdateUserEmailRequest,
   UpdateUserPasswordRequest,
   UserResponse,
+  LoginResponse,
+  LoginRequest,
 } from '@simplenews/common';
 import { firstValueFrom } from 'rxjs';
+import { Request } from 'express';
 
 @Injectable()
 export class AppService {
-  constructor(@Inject('USER_SERVICE') private readonly clientUserService: ClientProxy) {}
+  constructor(
+    @Inject('USER_SERVICE') private readonly clientUserService: ClientProxy,
+    @Inject('AUTH_SERVICE') private readonly clientAuthService: ClientProxy,
+  ) {}
 
   async createUser(request: CreateUserRequest): Promise<ResonseEntity<UserResponse>> {
     try {
@@ -98,10 +104,10 @@ export class AppService {
     }
   }
 
-  async getAllUsers(): Promise<ResonseEntity<UserResponse[]>> {
+  async getAllUsers(request: Request): Promise<ResonseEntity<UserResponse[]>> {
     try {
       const pattern = { cmd: 'get all users' };
-      const payload = {};
+      const payload = { user: request.user };
       const response: UserResponse[] = await firstValueFrom(
         this.clientUserService.send<UserResponse[]>(pattern, payload),
       );
@@ -115,10 +121,13 @@ export class AppService {
     }
   }
 
-  async getUserById(id: string): Promise<ResonseEntity<UserResponse>> {
+  async getUserById(request: Request, id: string): Promise<ResonseEntity<UserResponse>> {
     try {
       const pattern = { cmd: 'get user by id' };
-      const payload = { id };
+      const payload = {
+        user: request.user,
+        id,
+      };
       const response: UserResponse = await firstValueFrom(
         this.clientUserService.send<UserResponse>(pattern, payload),
       );
@@ -128,6 +137,18 @@ export class AppService {
         data: response,
       };
     } catch (error: any) {
+      throw new RpcException(error);
+    }
+  }
+
+  async login(request: LoginRequest): Promise<LoginResponse> {
+    try {
+      const { email, password } = request;
+      const pattern = { cmd: 'login' };
+      const payload = { email, password };
+      return await firstValueFrom(this.clientAuthService.send<LoginResponse>(pattern, payload));
+    } catch (error: any) {
+      console.log(error);
       throw new RpcException(error);
     }
   }

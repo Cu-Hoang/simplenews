@@ -26,8 +26,8 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.READER })
-  role: Role;
+  @Column({ type: 'enum', enum: Role, array: true, default: [Role.READER] })
+  roles: Role[];
 
   @Column({ type: 'int', default: 0 })
   freeArticlesRead: number;

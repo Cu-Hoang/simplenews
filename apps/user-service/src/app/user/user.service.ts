@@ -70,6 +70,17 @@ export class UserService {
     return this.userMapper.toUserResponse(user);
   }
 
+  async getByEmailForAuth(email: string): Promise<any> {
+    const user = await this.userRepository.findOneBy({ email });
+    if (!user) throw new RpcException({ statusCode: 400, message: 'User does not exist' });
+    return {
+      id: user.id,
+      password: user.password,
+      roles: user.roles,
+      premium: user.isPremium,
+    };
+  }
+
   getData(): { message: string } {
     return { message: 'Hello API' };
   }

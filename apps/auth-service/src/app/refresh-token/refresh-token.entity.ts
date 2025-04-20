@@ -12,6 +12,9 @@ export class RefreshToken {
   @Column('uuid')
   jti: string;
 
+  @Column()
+  device: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

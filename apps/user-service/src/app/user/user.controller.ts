@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, SetMetadata, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
   UserResponse,
@@ -6,6 +6,8 @@ import {
   UpdateUserRequest,
   UpdateUserEmailRequest,
   UpdateUserPasswordRequest,
+  RpcRolesGuard,
+  RpcPremiumGuard,
 } from '@simplenews/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
@@ -40,15 +42,25 @@ export class UserController {
     return await this.userService.updatePassword(id, request);
   }
 
+  @UseGuards(RpcRolesGuard)
+  @SetMetadata('roles', ['admin'])
   @MessagePattern({ cmd: 'get all users' })
   async getAll(): Promise<UserResponse[]> {
     return await this.userService.getAll();
   }
 
+  @UseGuards(RpcRolesGuard)
+  @SetMetadata('roles', ['admin'])
   @MessagePattern({ cmd: 'get user by id' })
   async getById(@Payload() data: { id: string }): Promise<UserResponse> {
     const { id } = data;
     return await this.userService.getById(id);
+  }
+
+  @MessagePattern({ cmd: 'get user by email' })
+  async getByEmailForAuth(@Payload() data: { email: string }): Promise<any> {
+    const { email } = data;
+    return await this.userService.getByEmailForAuth(email);
   }
 
   @Get()

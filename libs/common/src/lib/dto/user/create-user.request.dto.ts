@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { Match } from '../match.decorator';
+import { Match } from '../../decorator/match.decorator';
 
 export class CreateUserRequest {
   @IsOptional()

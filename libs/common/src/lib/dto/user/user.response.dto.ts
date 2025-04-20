@@ -7,7 +7,7 @@ export class UserResponse {
 
   readonly email: string;
 
-  readonly role: string;
+  readonly roles: string[];
 
   readonly freeArticlesRead: number;
 

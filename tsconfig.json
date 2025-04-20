@@ -17,6 +17,12 @@
     },
     {
       "path": "./libs/common"
+    },
+    {
+      "path": "./apps/auth-service-e2e"
+    },
+    {
+      "path": "./apps/auth-service"
     }
   ]
 }

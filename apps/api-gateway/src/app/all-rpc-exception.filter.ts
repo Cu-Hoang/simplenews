@@ -5,18 +5,25 @@ import { RpcException } from '@nestjs/microservices';
 export class AllRpcExceptionFilter implements ExceptionFilter {
   catch(exception: RpcException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
+
+    const request = ctx.getRequest();
+
     const response = ctx.getResponse();
 
     const error = exception.getError();
-
-    const status = typeof error === 'object' && error['statusCode'] ? error['statusCode'] : 500;
-
+    let status = 500;
+    if (typeof error === 'object' && error !== null) {
+      if ('statusCode' in error && typeof error.statusCode === 'number') status = error.statusCode;
+      else if (error.status === 'error') status = 403;
+    }
     const message =
-      typeof error === 'object' && error['message'] ? error['message'] : 'Internal Server Error';
-
+      typeof error === 'object' && error.message ? error.message : 'Internal Server Error';
+    console.log(error);
     response.status(status).json({
       statusCode: status,
       message,
+      timestamp: new Date().toISOString(),
+      path: request.url,
     });
   }
 }

@@ -7,12 +7,18 @@ import {
   UpdateUserEmailRequest,
   UpdateUserPasswordRequest,
   UserResponse,
+  LoginResponse,
+  LoginRequest,
 } from '@simplenews/common';
 import { firstValueFrom } from 'rxjs';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class AppService {
-  constructor(@Inject('USER_SERVICE') private readonly clientUserService: ClientProxy) {}
+  constructor(
+    @Inject('USER_SERVICE') private readonly clientUserService: ClientProxy,
+    @Inject('AUTH_SERVICE') private readonly clientAuthService: ClientProxy,
+  ) {}
 
   async createUser(request: CreateUserRequest): Promise<ResonseEntity<UserResponse>> {
     try {
@@ -70,7 +76,6 @@ export class AppService {
         data: response,
       };
     } catch (error: any) {
-      console.log(error);
       throw new RpcException(error);
     }
   }
@@ -98,10 +103,10 @@ export class AppService {
     }
   }
 
-  async getAllUsers(): Promise<ResonseEntity<UserResponse[]>> {
+  async getAllUsers(request: Request): Promise<ResonseEntity<UserResponse[]>> {
     try {
       const pattern = { cmd: 'get all users' };
-      const payload = {};
+      const payload = { user: request.user };
       const response: UserResponse[] = await firstValueFrom(
         this.clientUserService.send<UserResponse[]>(pattern, payload),
       );
@@ -115,10 +120,13 @@ export class AppService {
     }
   }
 
-  async getUserById(id: string): Promise<ResonseEntity<UserResponse>> {
+  async getUserById(request: Request, id: string): Promise<ResonseEntity<UserResponse>> {
     try {
       const pattern = { cmd: 'get user by id' };
-      const payload = { id };
+      const payload = {
+        user: request.user,
+        id,
+      };
       const response: UserResponse = await firstValueFrom(
         this.clientUserService.send<UserResponse>(pattern, payload),
       );
@@ -129,6 +137,104 @@ export class AppService {
       };
     } catch (error: any) {
       throw new RpcException(error);
+    }
+  }
+
+  async login(request: LoginRequest, response): Promise<ResonseEntity<null>> {
+    try {
+      const { email, password } = request;
+      const pattern = { cmd: 'login' };
+      const payload = { email, password };
+      const { accessToken, refreshToken } = await firstValueFrom(
+        this.clientAuthService.send<LoginResponse>(pattern, payload),
+      );
+      response.cookie('access_token', accessToken, {
+        httpOnly: false,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000,
+      });
+      response.cookie('refresh_token', refreshToken, {
+        httpOnly: false,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+      return {
+        statusCode: 201,
+        message: 'logged in successfully',
+        data: null,
+      };
+    } catch (error: any) {
+      throw new RpcException(error);
+    }
+  }
+
+  async logout(refresh_token: string, response: Response): Promise<ResonseEntity<null>> {
+    try {
+      if (!refresh_token)
+        throw new RpcException({ statusCode: 400, message: 'Refresh token does not exist' });
+      const pattern = { cmd: 'logout' };
+      const payload = { refresh_token };
+      await firstValueFrom(this.clientAuthService.send<any>(pattern, payload));
+      response.clearCookie('access_token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
+      response.clearCookie('refresh_token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
+      return {
+        statusCode: 201,
+        message: 'logged out successfully',
+        data: null,
+      };
+    } catch (error: any) {
+      console.log(error);
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async renewAccessToken(
+    access_token: string,
+    refresh_token: string,
+    response: Response,
+  ): Promise<ResonseEntity<null>> {
+    try {
+      if (!access_token)
+        throw new RpcException({ statusCode: 400, message: 'Access token does not exist' });
+      if (!refresh_token)
+        throw new RpcException({ statusCode: 400, message: 'Refresh token does not exist' });
+      const pattern = { cmd: 'renew access token' };
+      const payload = { access_token, refresh_token };
+      const { accessToken, refreshToken } = await firstValueFrom(
+        this.clientAuthService.send<any>(pattern, payload),
+      );
+      response.cookie('access_token', accessToken, {
+        httpOnly: false,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000,
+      });
+      response.cookie('refresh_token', refreshToken, {
+        httpOnly: false,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+      return {
+        statusCode: 201,
+        message: 'renewed access token successfully',
+        data: null,
+      };
+    } catch (error: any) {
+      console.log(error);
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
     }
   }
 

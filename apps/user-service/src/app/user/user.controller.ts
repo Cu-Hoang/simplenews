@@ -63,6 +63,12 @@ export class UserController {
     return await this.userService.getByEmailForAuth(email);
   }
 
+  @MessagePattern({ cmd: 'get user by id internally' })
+  async getByIdInternally(@Payload() data: { id: string }): Promise<any> {
+    const { id } = data;
+    return await this.userService.getByIdInternally(id);
+  }
+
   @Get()
   getData() {
     return this.userService.getData();

@@ -73,17 +73,11 @@ export class AuthService {
         roles: user.roles,
         premium: user.premium,
       },
-      {
-        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION'),
-      },
+      { expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION') },
     );
     const refreshToken = await this.jwtService.sign(
-      {
-        jti,
-      },
-      {
-        expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION'),
-      },
+      { jti },
+      { expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION') },
     );
     return {
       accessToken,
@@ -98,6 +92,45 @@ export class AuthService {
       if (!result.affected)
         throw new RpcException({ statusCode: 400, message: 'You already logged out' });
       return true;
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async renewAccessToken(access_token: string, refresh_token: string): Promise<LoginResponse> {
+    try {
+      const { sub } = this.jwtService.decode(access_token);
+      const pattern = { cmd: 'get user by id internally' };
+      const payload = {
+        id: sub,
+      };
+      const user: any = await firstValueFrom(this.clientUserService.send<any>(pattern, payload));
+      const { jti } = this.jwtService.decode(refresh_token);
+      const oldRefreshToken = await this.refreshTokenRepository.findOneBy({ user_id: sub, jti });
+      if (!oldRefreshToken)
+        throw new RpcException({ statusCode: 400, message: 'You already logged out' });
+      const newJti = uuidv7();
+      oldRefreshToken.jti = newJti;
+      oldRefreshToken.expiresAt =
+        Date.now() + this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION');
+      this.refreshTokenRepository.save(oldRefreshToken);
+      const accessToken = await this.jwtService.sign(
+        {
+          sub: user.id,
+          roles: user.roles,
+          premium: user.premium,
+        },
+        { expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION') },
+      );
+      const refreshToken = await this.jwtService.sign(
+        { jti: newJti },
+        { expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION') },
+      );
+      return {
+        accessToken,
+        refreshToken,
+      };
     } catch (error: any) {
       if (error instanceof RpcException) throw error;
       else throw new RpcException(error);

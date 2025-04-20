@@ -89,12 +89,25 @@ export class AppController {
     return await this.appService.login(request, response);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/auths/logout')
   async logout(
     @Request() request: Request,
     @Response({ passthrough: true }) response: Response,
   ): Promise<ResonseEntity<null>> {
     return await this.appService.logout(request?.cookies?.refresh_token, response);
+  }
+
+  @Post('/auths/renew-access-token')
+  async renewAccessToken(
+    @Request() request: Request,
+    @Response({ passthrough: true }) response: Response,
+  ): Promise<ResonseEntity<null>> {
+    return await this.appService.renewAccessToken(
+      request?.cookies?.access_token,
+      request?.cookies?.refresh_token,
+      response,
+    );
   }
 
   @Get()

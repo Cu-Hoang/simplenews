@@ -25,6 +25,14 @@ export class AuthController {
     return await this.authService.logout(refresh_token);
   }
 
+  @MessagePattern({ cmd: 'renew access token' })
+  async renewAccessToken(
+    @Payload() data: { access_token: string; refresh_token: string },
+  ): Promise<LoginResponse> {
+    const { access_token, refresh_token } = data;
+    return await this.authService.renewAccessToken(access_token, refresh_token);
+  }
+
   @Get()
   getData() {
     return this.authService.getData();

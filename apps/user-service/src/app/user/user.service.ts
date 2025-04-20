@@ -81,6 +81,16 @@ export class UserService {
     };
   }
 
+  async getByIdInternally(id: string): Promise<any> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new RpcException({ statusCode: 400, message: 'User does not exist' });
+    return {
+      id: user.id,
+      roles: user.roles,
+      premium: user.isPremium,
+    };
+  }
+
   getData(): { message: string } {
     return { message: 'Hello API' };
   }

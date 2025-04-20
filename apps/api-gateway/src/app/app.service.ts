@@ -11,7 +11,7 @@ import {
   LoginRequest,
 } from '@simplenews/common';
 import { firstValueFrom } from 'rxjs';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class AppService {
@@ -76,7 +76,6 @@ export class AppService {
         data: response,
       };
     } catch (error: any) {
-      console.log(error);
       throw new RpcException(error);
     }
   }
@@ -141,15 +140,62 @@ export class AppService {
     }
   }
 
-  async login(request: LoginRequest): Promise<LoginResponse> {
+  async login(request: LoginRequest, response): Promise<ResonseEntity<null>> {
     try {
       const { email, password } = request;
       const pattern = { cmd: 'login' };
       const payload = { email, password };
-      return await firstValueFrom(this.clientAuthService.send<LoginResponse>(pattern, payload));
+      const { accessToken, refreshToken } = await firstValueFrom(
+        this.clientAuthService.send<LoginResponse>(pattern, payload),
+      );
+      response.cookie('access_token', accessToken, {
+        httpOnly: false,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000,
+      });
+      response.cookie('refresh_token', refreshToken, {
+        httpOnly: false,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+      return {
+        statusCode: 201,
+        message: 'logged in successfully',
+        data: null,
+      };
+    } catch (error: any) {
+      throw new RpcException(error);
+    }
+  }
+
+  async logout(refresh_token: string, response: Response): Promise<ResonseEntity<null>> {
+    try {
+      if (!refresh_token)
+        throw new RpcException({ statusCode: 400, message: 'Refresh token does not exist' });
+      const pattern = { cmd: 'logout' };
+      const payload = { refresh_token };
+      await firstValueFrom(this.clientAuthService.send<any>(pattern, payload));
+      response.clearCookie('access_token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
+      response.clearCookie('refresh_token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
+      return {
+        statusCode: 201,
+        message: 'logged out successfully',
+        data: null,
+      };
     } catch (error: any) {
       console.log(error);
-      throw new RpcException(error);
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
     }
   }
 

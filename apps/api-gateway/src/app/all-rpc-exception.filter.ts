@@ -13,12 +13,11 @@ export class AllRpcExceptionFilter implements ExceptionFilter {
     const error = exception.getError();
     let status = 500;
     if (typeof error === 'object' && error !== null) {
-      if ('statusCode' in error && typeof error['statusCode'] === 'number')
-        status = error['statusCode'];
-      else if (error['status'] === 'error') status = 403;
+      if ('statusCode' in error && typeof error.statusCode === 'number') status = error.statusCode;
+      else if (error.status === 'error') status = 403;
     }
     const message =
-      typeof error === 'object' && error['message'] ? error['message'] : 'Internal Server Error';
+      typeof error === 'object' && error.message ? error.message : 'Internal Server Error';
     console.log(error);
     response.status(status).json({
       statusCode: status,

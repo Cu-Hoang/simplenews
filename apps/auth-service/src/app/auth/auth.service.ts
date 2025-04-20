@@ -91,6 +91,19 @@ export class AuthService {
     };
   }
 
+  async logout(refresh_token: string): Promise<boolean> {
+    try {
+      const { jti } = this.jwtService.verify(refresh_token);
+      const result = await this.refreshTokenRepository.delete({ jti });
+      if (!result.affected)
+        throw new RpcException({ statusCode: 400, message: 'You already logged out' });
+      return true;
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
   getData(): { message: string } {
     return { message: 'Hello API' };
   }

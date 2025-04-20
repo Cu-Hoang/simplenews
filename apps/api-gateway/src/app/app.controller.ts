@@ -86,24 +86,15 @@ export class AppController {
     @Body() request: LoginRequest,
     @Response({ passthrough: true }) response: Response,
   ): Promise<ResonseEntity<null>> {
-    const { accessToken, refreshToken } = await this.appService.login(request);
-    response.cookie('access_token', accessToken, {
-      httpOnly: false,
-      secure: false,
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 1000,
-    });
-    response.cookie('refresh_token', refreshToken, {
-      httpOnly: false,
-      secure: false,
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    return {
-      statusCode: 201,
-      message: 'logged in successfully',
-      data: null,
-    };
+    return await this.appService.login(request, response);
+  }
+
+  @Post('/auths/logout')
+  async logout(
+    @Request() request: Request,
+    @Response({ passthrough: true }) response: Response,
+  ): Promise<ResonseEntity<null>> {
+    return await this.appService.logout(request?.cookies?.refresh_token, response);
   }
 
   @Get()

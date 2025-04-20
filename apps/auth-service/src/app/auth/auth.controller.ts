@@ -19,6 +19,12 @@ export class AuthController {
     return await this.authService.login(email, password);
   }
 
+  @MessagePattern({ cmd: 'logout' })
+  async logout(@Payload() data: { refresh_token: string }): Promise<boolean> {
+    const { refresh_token } = data;
+    return await this.authService.logout(refresh_token);
+  }
+
   @Get()
   getData() {
     return this.authService.getData();

@@ -41,6 +41,9 @@ export class Article {
   view_count: number;
 
   @Prop({ type: Date, default: null })
+  published_at?: Date;
+
+  @Prop({ type: Date, default: null })
   deleted_at?: Date;
 }
 

@@ -11,6 +11,7 @@ import {
   LoginRequest,
   CreateArticleRequest,
   ArticleResponse,
+  UpdateArticleRequest,
 } from '@simplenews/common';
 import { firstValueFrom } from 'rxjs';
 import { Request, Response } from 'express';
@@ -279,6 +280,32 @@ export class AppService {
       };
     } catch (error: any) {
       throw new RpcException(error);
+    }
+  }
+
+  async updateArticle(
+    request: Request,
+    id: string,
+    requestDto: UpdateArticleRequest,
+  ): Promise<ResonseEntity<ArticleResponse>> {
+    try {
+      const pattern = { cmd: 'update article' };
+      const payload = {
+        user: request?.user,
+        article_id: id,
+        requestDto,
+      };
+      const response = await firstValueFrom(
+        this.clientArticleService.send<ArticleResponse>(pattern, payload),
+      );
+      return {
+        statusCode: 200,
+        message: 'updated an article successfully',
+        data: response,
+      };
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
     }
   }
 

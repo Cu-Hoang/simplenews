@@ -16,4 +16,6 @@ export class ArticleResponse {
   readonly is_premium: boolean;
 
   readonly view_count: number;
+
+  readonly published_at: Date;
 }

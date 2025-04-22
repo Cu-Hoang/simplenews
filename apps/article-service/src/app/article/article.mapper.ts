@@ -15,6 +15,7 @@ export class ArticleMapper {
       editor: article.editor ?? '',
       is_premium: article.is_premium,
       view_count: article.view_count,
+      published_at: article.published_at ?? new Date('1900-01-01'),
     };
   }
 }

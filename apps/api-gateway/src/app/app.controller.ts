@@ -8,6 +8,7 @@ import {
   LoginRequest,
   CreateArticleRequest,
   ArticleResponse,
+  UpdateArticleRequest,
 } from '@simplenews/common';
 import {
   Body,
@@ -125,6 +126,17 @@ export class AppController {
   @Get('/articles')
   async getAllArticles(): Promise<ResonseEntity<ArticleResponse[]>> {
     return await this.appService.getAllArticles();
+  }
+
+  @SetMetadata('roles', ['author'])
+  @UseGuards(JwtAuthGuard, HttpRolesGuard)
+  @Patch('/articles/:id')
+  async updateArticle(
+    @Request() request: Request,
+    @Param('id') id: string,
+    @Body() requestDto: UpdateArticleRequest,
+  ): Promise<ResonseEntity<ArticleResponse>> {
+    return await this.appService.updateArticle(request, id, requestDto);
   }
 
   @Get()

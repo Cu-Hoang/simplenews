@@ -25,6 +25,20 @@ export class ArticleController {
     return await this.articleService.getAll();
   }
 
+  @UseGuards(RpcRolesGuard)
+  @SetMetadata('roles', ['author'])
+  @MessagePattern({ cmd: 'update article' })
+  async update(
+    @Payload() data: { user: any; article_id: string; requestDto: CreateArticleRequest },
+  ): Promise<ArticleResponse> {
+    const {
+      user: { id },
+      article_id,
+      requestDto,
+    } = data;
+    return await this.articleService.update(id, article_id, requestDto);
+  }
+
   @Get()
   getData() {
     return this.articleService.getData();

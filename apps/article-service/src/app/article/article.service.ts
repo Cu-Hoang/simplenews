@@ -18,6 +18,11 @@ export class ArticleService {
     );
   }
 
+  async getAll(): Promise<ArticleResponse[]> {
+    const articlesList = await this.model.find().exec();
+    return articlesList.map((x) => this.articleMapper.toUserResponse(x));
+  }
+
   getData(): { message: string } {
     return { message: 'Hello API' };
   }

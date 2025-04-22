@@ -20,6 +20,11 @@ export class ArticleController {
     return await this.articleService.create(id, requestDto);
   }
 
+  @MessagePattern({ cmd: 'get all articles' })
+  async getAll(): Promise<ArticleResponse[]> {
+    return await this.articleService.getAll();
+  }
+
   @Get()
   getData() {
     return this.articleService.getData();

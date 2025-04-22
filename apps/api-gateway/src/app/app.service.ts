@@ -265,6 +265,23 @@ export class AppService {
     }
   }
 
+  async getAllArticles(): Promise<ResonseEntity<ArticleResponse[]>> {
+    try {
+      const pattern = { cmd: 'get all articles' };
+      const payload = {};
+      const response: ArticleResponse[] = await firstValueFrom(
+        this.clientArticleService.send<ArticleResponse[]>(pattern, payload),
+      );
+      return {
+        statusCode: 200,
+        message: 'got all articles successfully',
+        data: response,
+      };
+    } catch (error: any) {
+      throw new RpcException(error);
+    }
+  }
+
   getData(): { message: string } {
     return { message: 'Hello API' };
   }

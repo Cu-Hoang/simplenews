@@ -122,6 +122,11 @@ export class AppController {
     return await this.appService.createArticle(request, requestDto);
   }
 
+  @Get('/articles')
+  async getAllArticles(): Promise<ResonseEntity<ArticleResponse[]>> {
+    return await this.appService.getAllArticles();
+  }
+
   @Get()
   getData() {
     return this.appService.getData();

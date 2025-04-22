@@ -14,7 +14,6 @@ export const databaseProviders = [
         password: configService.get<string>('POSTGRES_PASSWORD'),
         database: configService.get<string>('POSTGRES_DB_NAME'),
         entities: [RefreshToken],
-        synchronize: true,
       });
       await dataSource.initialize();
       return dataSource;

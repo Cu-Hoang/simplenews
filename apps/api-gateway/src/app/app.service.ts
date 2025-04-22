@@ -9,6 +9,8 @@ import {
   UserResponse,
   LoginResponse,
   LoginRequest,
+  CreateArticleRequest,
+  ArticleResponse,
 } from '@simplenews/common';
 import { firstValueFrom } from 'rxjs';
 import { Request, Response } from 'express';
@@ -18,6 +20,7 @@ export class AppService {
   constructor(
     @Inject('USER_SERVICE') private readonly clientUserService: ClientProxy,
     @Inject('AUTH_SERVICE') private readonly clientAuthService: ClientProxy,
+    @Inject('ARTICLE_SERVICE') private readonly clientArticleService: ClientProxy,
   ) {}
 
   async createUser(request: CreateUserRequest): Promise<ResonseEntity<UserResponse>> {
@@ -233,6 +236,30 @@ export class AppService {
       };
     } catch (error: any) {
       console.log(error);
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async createArticle(
+    request: Request,
+    requestDto: CreateArticleRequest,
+  ): Promise<ResonseEntity<ArticleResponse>> {
+    try {
+      const pattern = { cmd: 'create article' };
+      const payload = {
+        user: request?.user,
+        requestDto,
+      };
+      const response = await firstValueFrom(
+        this.clientArticleService.send<ArticleResponse>(pattern, payload),
+      );
+      return {
+        statusCode: 201,
+        message: 'created an article successfully',
+        data: response,
+      };
+    } catch (error: any) {
       if (error instanceof RpcException) throw error;
       else throw new RpcException(error);
     }

@@ -6,6 +6,8 @@ import {
   UpdateUserEmailRequest,
   UpdateUserPasswordRequest,
   LoginRequest,
+  CreateArticleRequest,
+  ArticleResponse,
 } from '@simplenews/common';
 import {
   Body,
@@ -108,6 +110,16 @@ export class AppController {
       request?.cookies?.refresh_token,
       response,
     );
+  }
+
+  @SetMetadata('roles', ['author'])
+  @UseGuards(JwtAuthGuard, HttpRolesGuard)
+  @Post('/articles')
+  async createArticle(
+    @Request() request: Request,
+    @Body() requestDto: CreateArticleRequest,
+  ): Promise<ResonseEntity<ArticleResponse>> {
+    return await this.appService.createArticle(request, requestDto);
   }
 
   @Get()

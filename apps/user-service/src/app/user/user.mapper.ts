@@ -20,7 +20,7 @@ export class UserMapper {
       firstname: user.firstname ?? '',
       lastname: user.lastname ?? '',
       email: user.email,
-      role: user.role,
+      roles: user.roles,
       freeArticlesRead: user.freeArticlesRead,
       lastReadReset: user.lastReadReset,
       isPremium: user.isPremium,

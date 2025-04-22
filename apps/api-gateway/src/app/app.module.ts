@@ -23,6 +23,14 @@ import { ConfigModule } from '@nestjs/config';
           port: 4002,
         },
       },
+      {
+        name: 'ARTICLE_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: '127.0.0.1',
+          port: 4003,
+        },
+      },
     ]),
     ConfigModule.forRoot({
       isGlobal: true,

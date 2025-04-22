@@ -52,7 +52,7 @@ export class UserController {
   @UseGuards(RpcRolesGuard)
   @SetMetadata('roles', ['admin'])
   @MessagePattern({ cmd: 'get user by id' })
-  async getById(@Payload() data: { id: string }): Promise<UserResponse> {
+  async getById(@Payload() data: { user: any; id: string }): Promise<UserResponse> {
     const { id } = data;
     return await this.userService.getById(id);
   }

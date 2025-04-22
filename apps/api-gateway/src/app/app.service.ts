@@ -9,6 +9,9 @@ import {
   UserResponse,
   LoginResponse,
   LoginRequest,
+  CreateArticleRequest,
+  ArticleResponse,
+  UpdateArticleRequest,
 } from '@simplenews/common';
 import { firstValueFrom } from 'rxjs';
 import { Request, Response } from 'express';
@@ -18,6 +21,7 @@ export class AppService {
   constructor(
     @Inject('USER_SERVICE') private readonly clientUserService: ClientProxy,
     @Inject('AUTH_SERVICE') private readonly clientAuthService: ClientProxy,
+    @Inject('ARTICLE_SERVICE') private readonly clientArticleService: ClientProxy,
   ) {}
 
   async createUser(request: CreateUserRequest): Promise<ResonseEntity<UserResponse>> {
@@ -233,6 +237,92 @@ export class AppService {
       };
     } catch (error: any) {
       console.log(error);
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async createArticle(
+    request: Request,
+    requestDto: CreateArticleRequest,
+  ): Promise<ResonseEntity<ArticleResponse>> {
+    try {
+      const pattern = { cmd: 'create article' };
+      const payload = {
+        user: request?.user,
+        requestDto,
+      };
+      const response = await firstValueFrom(
+        this.clientArticleService.send<ArticleResponse>(pattern, payload),
+      );
+      return {
+        statusCode: 201,
+        message: 'created an article successfully',
+        data: response,
+      };
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async getAllArticles(): Promise<ResonseEntity<ArticleResponse[]>> {
+    try {
+      const pattern = { cmd: 'get all articles' };
+      const payload = {};
+      const response: ArticleResponse[] = await firstValueFrom(
+        this.clientArticleService.send<ArticleResponse[]>(pattern, payload),
+      );
+      return {
+        statusCode: 200,
+        message: 'got all articles successfully',
+        data: response,
+      };
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async updateArticle(
+    request: Request,
+    id: string,
+    requestDto: UpdateArticleRequest,
+  ): Promise<ResonseEntity<ArticleResponse>> {
+    try {
+      const pattern = { cmd: 'update article' };
+      const payload = {
+        user: request?.user,
+        article_id: id,
+        requestDto,
+      };
+      const response = await firstValueFrom(
+        this.clientArticleService.send<ArticleResponse>(pattern, payload),
+      );
+      return {
+        statusCode: 200,
+        message: 'updated an article successfully',
+        data: response,
+      };
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async getArticleById(id: string): Promise<ResonseEntity<ArticleResponse>> {
+    try {
+      const pattern = { cmd: 'get article by id' };
+      const payload = { id };
+      const response: ArticleResponse = await firstValueFrom(
+        this.clientArticleService.send<ArticleResponse>(pattern, payload),
+      );
+      return {
+        statusCode: 200,
+        message: 'got an article by id successfully',
+        data: response,
+      };
+    } catch (error: any) {
       if (error instanceof RpcException) throw error;
       else throw new RpcException(error);
     }

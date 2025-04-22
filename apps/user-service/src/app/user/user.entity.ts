@@ -29,27 +29,27 @@ export class User {
   @Column({ type: 'enum', enum: Role, array: true, default: [Role.READER] })
   roles: Role[];
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int', default: 0, name: 'free_articles_read' })
   freeArticlesRead: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'last_read_reset' })
   lastReadReset: Date;
 
-  @Column({ default: false })
+  @Column({ default: false, name: 'is_premium' })
   isPremium: boolean;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamp', nullable: true, name: 'premium_expiry' })
   premiumExpiry: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'avatar_url' })
   avatarUrl: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deleted_at: Date;
 }

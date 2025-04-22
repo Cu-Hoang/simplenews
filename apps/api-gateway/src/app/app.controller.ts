@@ -6,6 +6,10 @@ import {
   UpdateUserEmailRequest,
   UpdateUserPasswordRequest,
   LoginRequest,
+  CreateArticleRequest,
+  ArticleResponse,
+  UpdateArticleRequest,
+  ParamId,
 } from '@simplenews/common';
 import {
   Body,
@@ -108,6 +112,39 @@ export class AppController {
       request?.cookies?.refresh_token,
       response,
     );
+  }
+
+  @SetMetadata('roles', ['author'])
+  @UseGuards(JwtAuthGuard, HttpRolesGuard)
+  @Post('/articles')
+  async createArticle(
+    @Request() request: Request,
+    @Body() requestDto: CreateArticleRequest,
+  ): Promise<ResonseEntity<ArticleResponse>> {
+    return await this.appService.createArticle(request, requestDto);
+  }
+
+  @Get('/articles')
+  async getAllArticles(): Promise<ResonseEntity<ArticleResponse[]>> {
+    return await this.appService.getAllArticles();
+  }
+
+  @SetMetadata('roles', ['author'])
+  @UseGuards(JwtAuthGuard, HttpRolesGuard)
+  @Patch('/articles/:id')
+  async updateArticle(
+    @Request() request: Request,
+    @Param() paramId: ParamId,
+    @Body() requestDto: UpdateArticleRequest,
+  ): Promise<ResonseEntity<ArticleResponse>> {
+    const { id } = paramId;
+    return await this.appService.updateArticle(request, id, requestDto);
+  }
+
+  @Get('/articles/:id')
+  async getArticleById(@Param() paramId: ParamId): Promise<ResonseEntity<ArticleResponse>> {
+    const { id } = paramId;
+    return await this.appService.getArticleById(id);
   }
 
   @Get()

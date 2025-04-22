@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
 
 @Entity()
@@ -16,8 +16,11 @@ export class RefreshToken {
   device: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
-  @Column({ type: 'timestamp', nullable: false })
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @Column({ type: 'timestamp', nullable: false, name: 'expires_at' })
   expiresAt: Date;
 }

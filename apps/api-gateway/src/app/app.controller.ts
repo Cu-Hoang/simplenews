@@ -9,6 +9,7 @@ import {
   CreateArticleRequest,
   ArticleResponse,
   UpdateArticleRequest,
+  ParamId,
 } from '@simplenews/common';
 import {
   Body,
@@ -133,10 +134,17 @@ export class AppController {
   @Patch('/articles/:id')
   async updateArticle(
     @Request() request: Request,
-    @Param('id') id: string,
+    @Param() paramId: ParamId,
     @Body() requestDto: UpdateArticleRequest,
   ): Promise<ResonseEntity<ArticleResponse>> {
+    const { id } = paramId;
     return await this.appService.updateArticle(request, id, requestDto);
+  }
+
+  @Get('/articles/:id')
+  async getArticleById(@Param() paramId: ParamId): Promise<ResonseEntity<ArticleResponse>> {
+    const { id } = paramId;
+    return await this.appService.getArticleById(id);
   }
 
   @Get()

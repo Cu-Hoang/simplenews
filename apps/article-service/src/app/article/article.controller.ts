@@ -39,6 +39,12 @@ export class ArticleController {
     return await this.articleService.update(id, article_id, requestDto);
   }
 
+  @MessagePattern({ cmd: 'get article by id' })
+  async getById(@Payload() data: { id: string }): Promise<ArticleResponse> {
+    const { id } = data;
+    return await this.articleService.getById(id);
+  }
+
   @Get()
   getData() {
     return this.articleService.getData();

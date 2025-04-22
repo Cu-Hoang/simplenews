@@ -279,7 +279,8 @@ export class AppService {
         data: response,
       };
     } catch (error: any) {
-      throw new RpcException(error);
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
     }
   }
 
@@ -301,6 +302,24 @@ export class AppService {
       return {
         statusCode: 200,
         message: 'updated an article successfully',
+        data: response,
+      };
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async getArticleById(id: string): Promise<ResonseEntity<ArticleResponse>> {
+    try {
+      const pattern = { cmd: 'get article by id' };
+      const payload = { id };
+      const response: ArticleResponse = await firstValueFrom(
+        this.clientArticleService.send<ArticleResponse>(pattern, payload),
+      );
+      return {
+        statusCode: 200,
+        message: 'got an article by id successfully',
         data: response,
       };
     } catch (error: any) {

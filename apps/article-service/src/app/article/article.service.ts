@@ -40,6 +40,13 @@ export class ArticleService {
     return this.articleMapper.toUserResponse(await new this.model(updatedArticle).save());
   }
 
+  async getById(id: string): Promise<ArticleResponse> {
+    const article = await this.model.findOne({ _id: id });
+    if (!article)
+      throw new RpcException({ statusCode: 400, message: 'The article does not exist' });
+    return this.articleMapper.toUserResponse(article);
+  }
+
   getData(): { message: string } {
     return { message: 'Hello API' };
   }

@@ -31,6 +31,14 @@ import { ConfigModule } from '@nestjs/config';
           port: 4003,
         },
       },
+      {
+        name: 'COMMENT_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: '127.0.0.1',
+          port: 4004,
+        },
+      },
     ]),
     ConfigModule.forRoot({
       isGlobal: true,

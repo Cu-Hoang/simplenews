@@ -29,6 +29,12 @@
     },
     {
       "path": "./apps/article-service"
+    },
+    {
+      "path": "./apps/comment-service-e2e"
+    },
+    {
+      "path": "./apps/comment-service"
     }
   ]
 }

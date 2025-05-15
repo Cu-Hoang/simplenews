@@ -33,8 +33,8 @@ export class AuthController {
     return await this.authService.renewAccessToken(access_token, refresh_token);
   }
 
-  @Get()
-  getData() {
-    return this.authService.getData();
+  @Get('/healthCheck')
+  healthCheck() {
+    return this.authService.healthCheck();
   }
 }

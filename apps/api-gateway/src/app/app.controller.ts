@@ -10,10 +10,15 @@ import {
   ArticleResponse,
   UpdateArticleRequest,
   ParamId,
+  CreateCommentRequest,
+  CommentResponse,
+  UpdateCommentRequest,
+  ParamArticleId,
 } from '@simplenews/common';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -147,8 +152,48 @@ export class AppController {
     return await this.appService.getArticleById(id);
   }
 
-  @Get()
-  getData() {
-    return this.appService.getData();
+  @UseGuards(JwtAuthGuard)
+  @Post('/comments/:article_id')
+  async createComment(
+    @Request() request: Request,
+    @Param() paramArticleId: ParamArticleId,
+    @Body() requestDto: CreateCommentRequest,
+  ): Promise<ResonseEntity<CommentResponse>> {
+    const { article_id } = paramArticleId;
+    return await this.appService.createComment(request, article_id, requestDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('/comments/:id')
+  async editComment(
+    @Request() request: Request,
+    @Param() paramId: ParamId,
+    @Body() requestDto: UpdateCommentRequest,
+  ): Promise<ResonseEntity<CommentResponse>> {
+    const { id } = paramId;
+    return await this.appService.editComment(id, request, requestDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('/comments/:id')
+  async deleteComment(
+    @Request() request: Request,
+    @Param() paramId: ParamId,
+  ): Promise<ResonseEntity<null>> {
+    const { id } = paramId;
+    return await this.appService.deleteComment(id, request);
+  }
+
+  @Get('/comments/:article_id')
+  async getAllComments(
+    @Param() paramArticleId: ParamArticleId,
+  ): Promise<ResonseEntity<CommentResponse[]>> {
+    const { article_id } = paramArticleId;
+    return await this.appService.getAllComments(article_id);
+  }
+
+  @Get('/healthCheck')
+  healthCheck() {
+    return this.appService.healthCheck();
   }
 }

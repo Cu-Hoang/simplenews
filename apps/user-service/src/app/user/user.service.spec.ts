@@ -12,9 +12,9 @@ describe('AppService', () => {
     service = app.get<UserService>(UserService);
   });
 
-  describe('getData', () => {
-    it('should return "Hello API"', () => {
-      expect(service.getData()).toEqual({ message: 'Hello API' });
+  describe('healthCheck', () => {
+    it('should return "Hello API from user service"', () => {
+      expect(service.healthCheck()).toEqual({ message: 'Hello API user service' });
     });
   });
 });

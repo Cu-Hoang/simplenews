@@ -57,7 +57,8 @@
         "apps/api-gateway-e2e/**/*",
         "apps/user-service-e2e/**/*",
         "apps/auth-service-e2e/**/*",
-        "apps/article-service-e2e/**/*"
+        "apps/article-service-e2e/**/*",
+        "apps/comment-service-e2e/**/*"
       ]
     },
     {

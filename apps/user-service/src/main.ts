@@ -21,7 +21,9 @@ async function bootstrap() {
   const httpPort = Number(process.env.HTTP_PORT ?? 3001);
   await app.startAllMicroservices();
   await app.listen(httpPort);
-  Logger.log(`🚀 Application is running on: http://localhost:${httpPort}/${globalPrefix}`);
+  Logger.log(
+    `🚀 Application is running on: http://localhost:${httpPort}/${globalPrefix}/healthCheck`,
+  );
 }
 
 bootstrap();

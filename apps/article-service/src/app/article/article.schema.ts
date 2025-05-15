@@ -29,7 +29,7 @@ export class Article {
   category: Category;
 
   @Prop({ type: String, required: true })
-  author: string;
+  author_id: string;
 
   @Prop({ type: String, default: null })
   editor?: string;

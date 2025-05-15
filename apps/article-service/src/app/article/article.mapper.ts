@@ -4,14 +4,14 @@ import { ArticleResponse } from '@simplenews/common';
 
 @Injectable()
 export class ArticleMapper {
-  toUserResponse(article: Article): ArticleResponse {
+  toArticleResponse(article: Article): ArticleResponse {
     return {
       id: article.id,
       title: article.title,
       content: article.content,
       status: article.status,
       category: article.category,
-      author: article.author,
+      author_id: article.author_id,
       editor: article.editor ?? '',
       is_premium: article.is_premium,
       view_count: article.view_count,

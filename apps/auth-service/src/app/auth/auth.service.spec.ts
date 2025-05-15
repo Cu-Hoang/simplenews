@@ -12,9 +12,9 @@ describe('AuthService', () => {
     service = app.get<AuthService>(AuthService);
   });
 
-  describe('getData', () => {
-    it('should return "Hello API"', () => {
-      expect(service.getData()).toEqual({ message: 'Hello API' });
+  describe('healthCheck', () => {
+    it('should return "Hello API from auth service"', () => {
+      expect(service.healthCheck()).toEqual({ message: 'Hello API auth service' });
     });
   });
 });

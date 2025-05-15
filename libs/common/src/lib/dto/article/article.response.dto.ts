@@ -9,7 +9,7 @@ export class ArticleResponse {
 
   readonly category: string;
 
-  readonly author: string;
+  readonly author_id: string;
 
   readonly editor?: string;
 

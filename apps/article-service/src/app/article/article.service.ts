@@ -14,9 +14,9 @@ export class ArticleService {
   ) {}
 
   async create(id: string, requestDto: CreateArticleRequest): Promise<ArticleResponse> {
-    return this.articleMapper.toUserResponse(
+    return this.articleMapper.toArticleResponse(
       await new this.model({
-        author: id,
+        author_id: id,
         published_at: Date.now(),
         ...requestDto,
       }).save(),
@@ -25,7 +25,7 @@ export class ArticleService {
 
   async getAll(): Promise<ArticleResponse[]> {
     const articlesList = await this.model.find().exec();
-    return articlesList.map((x) => this.articleMapper.toUserResponse(x));
+    return articlesList.map((x) => this.articleMapper.toArticleResponse(x));
   }
 
   async update(
@@ -33,21 +33,21 @@ export class ArticleService {
     article_id: string,
     requestDto: UpdateArticleRequest,
   ): Promise<ArticleResponse> {
-    const article = await this.model.findOne({ _id: article_id, author: id });
+    const article = await this.model.findOne({ _id: article_id, author_id: id });
     if (!article)
       throw new RpcException({ statusCode: 400, message: 'The article does not exist' });
     const updatedArticle = Object.assign(article, requestDto);
-    return this.articleMapper.toUserResponse(await new this.model(updatedArticle).save());
+    return this.articleMapper.toArticleResponse(await new this.model(updatedArticle).save());
   }
 
   async getById(id: string): Promise<ArticleResponse> {
     const article = await this.model.findOne({ _id: id });
     if (!article)
       throw new RpcException({ statusCode: 400, message: 'The article does not exist' });
-    return this.articleMapper.toUserResponse(article);
+    return this.articleMapper.toArticleResponse(article);
   }
 
-  getData(): { message: string } {
-    return { message: 'Hello API' };
+  healthCheck(): { message: string } {
+    return { message: 'Hello API from article service' };
   }
 }

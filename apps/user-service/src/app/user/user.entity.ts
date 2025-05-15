@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
-import { Role } from './enum/role';
+import { Role } from '../enum/role';
 
 @Entity()
 export class User {

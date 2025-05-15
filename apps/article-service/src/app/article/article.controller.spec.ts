@@ -12,10 +12,12 @@ describe('ArticleController', () => {
     }).compile();
   });
 
-  describe('getData', () => {
-    it('should return "Hello API"', () => {
+  describe('healthCheck', () => {
+    it('should return "Hello API from article service"', () => {
       const articleController = app.get<ArticleController>(ArticleController);
-      expect(articleController.getData()).toEqual({ message: 'Hello API' });
+      expect(articleController.healthCheck()).toEqual({
+        message: 'Hello API from article service',
+      });
     });
   });
 });

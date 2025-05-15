@@ -12,10 +12,10 @@ describe('AuthController', () => {
     }).compile();
   });
 
-  describe('getData', () => {
-    it('should return "Hello API"', () => {
+  describe('healthCheck', () => {
+    it('should return "Hello API from auth service"', () => {
       const authController = app.get<AuthController>(AuthController);
-      expect(authController.getData()).toEqual({ message: 'Hello API' });
+      expect(authController.healthCheck()).toEqual({ message: 'Hello API auth service' });
     });
   });
 });

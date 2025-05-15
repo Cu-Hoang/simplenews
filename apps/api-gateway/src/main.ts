@@ -33,7 +33,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   app.use(cookieParser());
   await app.listen(port);
-  Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
+  Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}/healthCheck`);
 }
 
 bootstrap();

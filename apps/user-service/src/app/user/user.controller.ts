@@ -7,11 +7,10 @@ import {
   UpdateUserEmailRequest,
   UpdateUserPasswordRequest,
   RpcRolesGuard,
-  RpcPremiumGuard,
 } from '@simplenews/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
-@Controller('users')
+@Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -69,8 +68,8 @@ export class UserController {
     return await this.userService.getByIdInternally(id);
   }
 
-  @Get()
-  getData() {
-    return this.userService.getData();
+  @Get('/healthCheck')
+  healthCheck() {
+    return this.userService.healthCheck();
   }
 }

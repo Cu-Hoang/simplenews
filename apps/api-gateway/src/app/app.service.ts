@@ -12,6 +12,9 @@ import {
   CreateArticleRequest,
   ArticleResponse,
   UpdateArticleRequest,
+  CreateCommentRequest,
+  CommentResponse,
+  UpdateCommentRequest,
 } from '@simplenews/common';
 import { firstValueFrom } from 'rxjs';
 import { Request, Response } from 'express';
@@ -22,6 +25,7 @@ export class AppService {
     @Inject('USER_SERVICE') private readonly clientUserService: ClientProxy,
     @Inject('AUTH_SERVICE') private readonly clientAuthService: ClientProxy,
     @Inject('ARTICLE_SERVICE') private readonly clientArticleService: ClientProxy,
+    @Inject('COMMENT_SERVICE') private readonly clientCommentService: ClientProxy,
   ) {}
 
   async createUser(request: CreateUserRequest): Promise<ResonseEntity<UserResponse>> {
@@ -328,7 +332,98 @@ export class AppService {
     }
   }
 
-  getData(): { message: string } {
-    return { message: 'Hello API' };
+  async createComment(
+    request: Request,
+    article_id: string,
+    requestDto: CreateCommentRequest,
+  ): Promise<ResonseEntity<CommentResponse>> {
+    try {
+      const pattern = { cmd: 'create comment' };
+      const payload = {
+        article_id,
+        user: request?.user,
+        requestDto,
+      };
+      const response: CommentResponse = await firstValueFrom(
+        this.clientCommentService.send<CommentResponse>(pattern, payload),
+      );
+      return {
+        statusCode: 201,
+        message: 'add comment successfully',
+        data: response,
+      };
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async editComment(
+    id: string,
+    request: Request,
+    requestDto: UpdateCommentRequest,
+  ): Promise<ResonseEntity<CommentResponse>> {
+    try {
+      const pattern = { cmd: 'edit comment' };
+      const payload = {
+        comment_id: id,
+        user: request?.user,
+        requestDto,
+      };
+      const response: CommentResponse = await firstValueFrom(
+        this.clientCommentService.send<CommentResponse>(pattern, payload),
+      );
+      return {
+        statusCode: 200,
+        message: 'edit comment successfully',
+        data: response,
+      };
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async deleteComment(id: string, request: Request): Promise<ResonseEntity<null>> {
+    try {
+      const pattern = { cmd: 'delete comment' };
+      const payload = {
+        comment_id: id,
+        user: request?.user,
+      };
+      const response: CommentResponse = await firstValueFrom(
+        this.clientCommentService.send<CommentResponse>(pattern, payload),
+      );
+      return {
+        statusCode: 200,
+        message: 'delete comment successfully',
+        data: null,
+      };
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  async getAllComments(article_id: string): Promise<ResonseEntity<CommentResponse[]>> {
+    try {
+      const pattern = { cmd: 'get all comments' };
+      const payload = { article_id };
+      const response: CommentResponse[] = await firstValueFrom(
+        this.clientCommentService.send<CommentResponse[]>(pattern, payload),
+      );
+      return {
+        statusCode: 200,
+        message: 'get all comments successfully',
+        data: response,
+      };
+    } catch (error: any) {
+      if (error instanceof RpcException) throw error;
+      else throw new RpcException(error);
+    }
+  }
+
+  healthCheck(): { message: string } {
+    return { message: 'Hello API from api gateway' };
   }
 }

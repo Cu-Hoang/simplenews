@@ -12,10 +12,10 @@ describe('UserController', () => {
     }).compile();
   });
 
-  describe('getData', () => {
-    it('should return "Hello API"', () => {
+  describe('healthCheck', () => {
+    it('should return "Hello API from user service"', () => {
       const userController = app.get<UserController>(UserController);
-      expect(userController.getData()).toEqual({ message: 'Hello API' });
+      expect(userController.healthCheck()).toEqual({ message: 'Hello API from user service' });
     });
   });
 });

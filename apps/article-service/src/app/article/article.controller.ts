@@ -45,8 +45,8 @@ export class ArticleController {
     return await this.articleService.getById(id);
   }
 
-  @Get()
-  getData() {
-    return this.articleService.getData();
+  @Get('/healthCheck')
+  healthCheck() {
+    return this.articleService.healthCheck();
   }
 }

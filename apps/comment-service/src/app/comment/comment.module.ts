@@ -26,14 +26,18 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       timeout: 15000,
       maxRedirects: 3,
     }),
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'ARTICLE_SERVICE',
-        transport: Transport.TCP,
-        options: {
-          host: '127.0.0.1',
-          port: 4003,
-        },
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get<string>('ARTICLE_SERVICE_HOST', '127.0.0.1'),
+            port: configService.get<number>('ARTICLE_SERVICE_PORT', 4003),
+          },
+        }),
+        inject: [ConfigService],
       },
     ]),
   ],

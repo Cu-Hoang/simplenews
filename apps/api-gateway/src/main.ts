@@ -29,11 +29,14 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AllRpcExceptionFilter());
   const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
+  const apiVersion = process.env.API_VERSION ?? 'v1';
+  app.setGlobalPrefix(globalPrefix + '/' + apiVersion);
+  const httpPort = Number(process.env.HTTP_PORT ?? 3000);
   app.use(cookieParser());
-  await app.listen(port);
-  Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}/healthCheck`);
+  await app.listen(httpPort);
+  Logger.log(
+    `🚀 Application is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}/healthCheck`,
+  );
 }
 
 bootstrap();

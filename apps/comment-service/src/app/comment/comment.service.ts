@@ -12,6 +12,7 @@ import {
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, timeout } from 'rxjs';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CommentService {
@@ -20,11 +21,12 @@ export class CommentService {
     @Inject('ARTICLE_SERVICE') private readonly clientArticleService: ClientProxy,
     private readonly commentMapper: CommentMapper,
     private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
   ) {}
 
   async classifyComment(content: string): Promise<any> {
     try {
-      const url = 'http://localhost:8000/predict';
+      const url = this.configService.get('MODEL_URL');
       const { data } = await firstValueFrom(
         this.httpService.post(url, { text: content }).pipe(timeout(15000)),
       );

@@ -36,6 +36,8 @@ FROM node:22.14.0-alpine AS runner
 
 ARG SERVICE
 
+ARG HTTP_PORT
+
 WORKDIR /app
 
 COPY --from=builder app/apps/$SERVICE/dist ./dist/apps/$SERVICE
@@ -46,9 +48,8 @@ COPY --from=builder app/package*.json .
 
 RUN npm install --omit=dev
 
-EXPOSE 3000
+EXPOSE $HTTP_PORT
 
 WORKDIR /app/dist/apps/$SERVICE
 
-CMD ["node", "main"]
-
+ENTRYPOINT ["node", "main"]

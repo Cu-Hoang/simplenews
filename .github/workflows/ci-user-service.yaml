@@ -7,7 +7,7 @@ on:
       - feature/**
     paths:
       - apps/user-service/**
-      - '!apps/user-service/README.md'
+      - "!apps/user-service/README.md"
     
   pull_request:
     branches:
@@ -15,7 +15,7 @@ on:
       - main
     paths:
       - apps/user-service/**
-      - '!apps/user-service/README.md'
+      - "!apps/user-service/README.md"
 
 jobs:
   build-test:

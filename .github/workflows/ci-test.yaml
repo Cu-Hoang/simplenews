@@ -1,4 +1,4 @@
-name: ci-api-gateway
+name: ci-test
 on:
   workflow_dispatch:
 
@@ -6,7 +6,7 @@ on:
     branches:
       - feature/**
     paths:
-      - .github
+      - .github/**
 
 jobs:
   build-test:

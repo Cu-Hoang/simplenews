@@ -88,7 +88,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
           dockerfile: ./Dockerfile.dockerfile
           build-args: |
             SERVICE=article-service

@@ -89,7 +89,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          dockerfile: ./Dockerfile
+          dockerfile: Dockerfile.dockerfile
           build-args: |
             SERVICE=api-gateway
             HTTP_PORT=3000

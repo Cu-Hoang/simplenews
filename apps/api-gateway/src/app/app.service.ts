@@ -423,7 +423,7 @@ export class AppService {
     }
   }
 
-  healthCheck(): { message: string } {
+  get(): { message: string } {
     return { message: 'Hello API from api gateway' };
   }
 }

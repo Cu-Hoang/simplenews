@@ -2,10 +2,15 @@ import { Controller, Get, SetMetadata, UseGuards } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { ArticleResponse, CreateArticleRequest, RpcRolesGuard } from '@simplenews/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { HealthCheck, HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus';
 
 @Controller()
 export class ArticleController {
-  constructor(private readonly articleService: ArticleService) {}
+  constructor(
+    private readonly articleService: ArticleService,
+    private readonly health: HealthCheckService,
+    private readonly http: HttpHealthIndicator,
+  ) {}
 
   @UseGuards(RpcRolesGuard)
   @SetMetadata('roles', ['author'])
@@ -45,8 +50,14 @@ export class ArticleController {
     return await this.articleService.getById(id);
   }
 
-  @Get('/healthCheck')
-  healthCheck() {
-    return this.articleService.healthCheck();
+  @Get()
+  get() {
+    return this.articleService.get();
+  }
+
+  @Get('/health')
+  @HealthCheck()
+  check() {
+    return this.health.check([() => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com')]);
   }
 }

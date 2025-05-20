@@ -12,3 +12,4 @@ sql
 **/README.md
 .verdaccio
 tmp
+helm-charts

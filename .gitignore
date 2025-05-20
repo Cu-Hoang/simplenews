@@ -1,11 +1,7 @@
 node_modules
 .nx
 **/dist/
-.env
-.env.local
-.env.development
-.env.production
-test-output
-**/.env
+**/.env*
 .verdaccio
 tmp/libs/common/build
+**/secret*.yaml

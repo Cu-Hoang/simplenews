@@ -33,10 +33,15 @@ import { AppService } from './app.service';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { HttpRolesGuard } from './role.guard';
+import { HealthCheck, HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly health: HealthCheckService,
+    private readonly http: HttpHealthIndicator,
+  ) {}
 
   @Post('/users/register')
   async createUser(@Body() request: CreateUserRequest): Promise<ResonseEntity<UserResponse>> {
@@ -192,8 +197,14 @@ export class AppController {
     return await this.appService.getAllComments(article_id);
   }
 
-  @Get('/healthCheck')
-  healthCheck() {
-    return this.appService.healthCheck();
+  @Get()
+  get() {
+    return this.appService.get();
+  }
+
+  @Get('/health')
+  @HealthCheck()
+  check() {
+    return this.health.check([() => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com')]);
   }
 }

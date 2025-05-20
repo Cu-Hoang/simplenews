@@ -12,9 +12,9 @@ describe('CommentService', () => {
     service = app.get<CommentService>(CommentService);
   });
 
-  describe('getData', () => {
+  describe('get', () => {
     it('should return "Hello API from comment service"', () => {
-      expect(service.healtCheck()).toEqual({ message: 'Hello API from comment service' });
+      expect(service.get()).toEqual({ message: 'Hello API from comment service' });
     });
   });
 });

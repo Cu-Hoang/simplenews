@@ -91,7 +91,7 @@ export class UserService {
     };
   }
 
-  healthCheck(): { message: string } {
+  get(): { message: string } {
     return { message: 'Hello API from user service' };
   }
 }

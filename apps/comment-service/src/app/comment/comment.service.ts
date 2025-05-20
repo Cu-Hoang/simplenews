@@ -96,7 +96,7 @@ export class CommentService {
     return commentList.map((x) => this.commentMapper.toCommentResponse(x));
   }
 
-  healtCheck(): { message: string } {
+  get(): { message: string } {
     return { message: 'Hello API from comment service' };
   }
 }

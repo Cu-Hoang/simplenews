@@ -88,7 +88,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          dockerfile: ./Dockerfile.dockerfile
+          context: .
+          dockerfile: ./Dockerfile
           build-args: |
             SERVICE=article-service
             HTTP_PORT=3003

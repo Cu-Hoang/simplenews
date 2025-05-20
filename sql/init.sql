@@ -1,0 +1,50 @@
+CREATE DATABASE user_db;
+CREATE DATABASE auth_db;
+
+\connect user_db
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_roles_enum') THEN
+    CREATE TYPE user_roles_enum AS ENUM ('reader', 'author', 'editor', 'moderator', 'admin');
+  END IF;
+END
+$$;
+
+CREATE TABLE IF NOT EXISTS "user" (
+  id UUID PRIMARY KEY,
+  firstname TEXT,
+  lastname TEXT,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  roles user_roles_enum[] DEFAULT '{reader}'::user_roles_enum[],
+  free_articles_read INT DEFAULT 0,
+  last_read_reset TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  is_premium BOOLEAN DEFAULT FALSE,
+  premium_expiry TIMESTAMP,
+  avatar_url TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP
+);
+
+INSERT INTO "user" (
+  id, email, password, roles, free_articles_read, last_read_reset, is_premium, created_at, updated_at
+) VALUES
+	 ('0196581b-f1ce-73d9-88b2-882def6edc1c','admin@example.com','$2b$10$Uenh/Au4B5DHwTFaqvkD0OipjLuwldprea/vZnQhc4ZVM7itSDvKy','{admin}',1,CURRENT_TIMESTAMP,true,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+     ('0196581d-51f7-708e-a6b3-fb1b257238ac','moderator@example.com','$2b$10$hRH1qY9v6UjlWlkV9PjBCeU/e/7fEt20VhqDbT.Lk4Gu21igVkQMm','{moderator}',1,CURRENT_TIMESTAMP,true,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+     ('0196581d-01fd-7217-ba3a-3f9e60f4f3e6','editor@example.com','$2b$10$15GIfa9Jkr7BFddXNuPjFOJxQ1Aa.DdhYuhn64kLy1lBt2P0cX0lm','{editor}',1,CURRENT_TIMESTAMP,true,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
+     ('0196581c-bec1-7487-94a8-1b4ced1fce66','author@example.com','$2b$10$wRSs22ysxIVSF/5hUfnpU.Ss/JWdwh6ngTCiJKUVvb63CeXjyTRUO','{author}',1,CURRENT_TIMESTAMP,true,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+ON CONFLICT (email) DO NOTHING;
+
+\connect auth_db
+CREATE TABLE IF NOT EXISTS "refresh_token" (
+  id UUID PRIMARY KEY,
+  user_id UUID NOT NULL,
+  jti UUID NOT NULL,
+  device TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP NOT NULL
+);
+
+

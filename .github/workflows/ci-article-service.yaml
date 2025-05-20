@@ -7,7 +7,7 @@ on:
       - feature/**
     paths:
       - apps/article-service/**
-      - !article-service/README.md
+      - '!apps/article-service/README.md'
     
   pull_request:
     branches:
@@ -15,7 +15,7 @@ on:
       - main
     paths:
       - apps/article-service/**
-      - !article-service/README.md
+      - '!apps/article-service/README.md'
 
 jobs:
   build-test:

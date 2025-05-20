@@ -7,7 +7,7 @@ on:
       - feature/**
     paths:
       - apps/auth-service/**
-      - !auth-service/README.md
+      - '!apps/auth-service/README.md'
 
   pull_request:
     branches:
@@ -15,7 +15,7 @@ on:
       - main
     paths:
       - apps/auth-service/**
-      - !auth-service/README.md
+      - '!apps/auth-service/README.md'
 
 jobs:
   build-test:

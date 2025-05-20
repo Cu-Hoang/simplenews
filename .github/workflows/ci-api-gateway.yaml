@@ -7,7 +7,7 @@ on:
       - feature/**
     paths:
       - apps/api-gateway/**
-      - !apps/api-gateway/README.md
+      - '!apps/api-gateway/README.md'
     
   pull_request:
     branches:
@@ -15,7 +15,7 @@ on:
       - main
     paths:
       - apps/api-gateway/**
-      - !apps/api-gateway/README.md
+      - '!apps/api-gateway/README.md'
 
 jobs:
   build-test:

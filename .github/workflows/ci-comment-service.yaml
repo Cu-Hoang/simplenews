@@ -60,7 +60,7 @@ jobs:
         npx nx build comment-service
 
   docker:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main' }}
     needs: build-test
     runs-on: ubuntu-latest
     steps:

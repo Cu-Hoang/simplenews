@@ -16,14 +16,18 @@ import { RefreshTokenMapper } from '../refresh-token/refresh-token.mapper';
       envFilePath: '.env',
     }),
     DatabaseModule,
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'USER_SERVICE',
-        transport: Transport.TCP,
-        options: {
-          host: '127.0.0.1',
-          port: 4001,
-        },
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get<string>('USER_SERVICE_HOST', '127.0.0.1'),
+            port: configService.get<number>('USER_SERVICE_PORT', 4001),
+          },
+        }),
+        inject: [ConfigService],
       },
     ]),
     PassportModule,

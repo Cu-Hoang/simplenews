@@ -1,8 +1,4 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
+import 'module-alias/register';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
@@ -11,23 +7,23 @@ import { HttpExceptionFilter } from '@simplenews/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const tcpPort = Number(process.env.TCP_PORT ?? 4003);
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
-      host: '127.0.0.1',
-      port: tcpPort,
+      host: process.env.MSA_HOST ?? '127.0.0.1',
+      port: Number(process.env.MSA_PORT ?? 4003),
     },
   });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalFilters(new HttpExceptionFilter());
   const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
+  const apiVersion = process.env.API_VERSION ?? 'v1';
+  app.setGlobalPrefix(globalPrefix + '/' + apiVersion);
   const httpPort = Number(process.env.HTTP_PORT ?? 3003);
   await app.startAllMicroservices();
   await app.listen(httpPort);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${httpPort}/${globalPrefix}/healthCheck`,
+    `🚀 Application is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}/healthCheck`,
   );
 }
 

@@ -47,7 +47,7 @@ export class ArticleService {
     return this.articleMapper.toArticleResponse(article);
   }
 
-  healthCheck(): { message: string } {
+  get(): { message: string } {
     return { message: 'Hello API from article service' };
   }
 }

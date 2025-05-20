@@ -2,10 +2,15 @@ import { Controller, Get } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CommentResponse, CreateCommentRequest, UpdateCommentRequest } from '@simplenews/common';
+import { HealthCheck, HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus';
 
 @Controller()
 export class CommentController {
-  constructor(private readonly commentService: CommentService) {}
+  constructor(
+    private readonly commentService: CommentService,
+    private readonly health: HealthCheckService,
+    private readonly http: HttpHealthIndicator,
+  ) {}
 
   @MessagePattern({ cmd: 'create comment' })
   async create(
@@ -46,8 +51,14 @@ export class CommentController {
     return await this.commentService.getAll(article_id);
   }
 
-  @Get('/healthCheck')
-  healtCheck() {
-    return this.commentService.healtCheck();
+  @Get()
+  get() {
+    return this.commentService.get();
+  }
+
+  @Get('/health')
+  @HealthCheck()
+  check() {
+    return this.health.check([() => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com')]);
   }
 }

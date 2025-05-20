@@ -31,7 +31,7 @@ async function bootstrap() {
   app.use(cookieParser());
   await app.listen(httpPort);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}/healthCheck`,
+    `🚀 Application is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}`,
   );
 }
 

@@ -137,7 +137,7 @@ export class AuthService {
     }
   }
 
-  healthCheck(): { message: string } {
+  get(): { message: string } {
     return { message: 'Hello API from auth service' };
   }
 }

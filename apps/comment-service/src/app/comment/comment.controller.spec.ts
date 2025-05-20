@@ -12,10 +12,10 @@ describe('CommentController', () => {
     }).compile();
   });
 
-  describe('getData', () => {
+  describe('get', () => {
     it('should return "Hello API from comment service"', () => {
       const commentController = app.get<CommentController>(CommentController);
-      expect(commentController.healtCheck()).toEqual({ message: 'Hello API from comment service' });
+      expect(commentController.get()).toEqual({ message: 'Hello API from comment service' });
     });
   });
 });

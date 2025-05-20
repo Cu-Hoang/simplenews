@@ -12,10 +12,10 @@ describe('AppController', () => {
     }).compile();
   });
 
-  describe('healthCheck', () => {
+  describe('get', () => {
     it('should return "Hello API from api gateway"', () => {
       const appController = app.get<AppController>(AppController);
-      expect(appController.healthCheck()).toEqual({ message: 'Hello API from api gateway' });
+      expect(appController.get()).toEqual({ message: 'Hello API from api gateway' });
     });
   });
 });

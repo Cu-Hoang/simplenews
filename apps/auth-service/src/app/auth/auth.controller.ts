@@ -2,10 +2,15 @@ import { Controller, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { LoginResponse } from '@simplenews/common';
+import { HealthCheck, HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly health: HealthCheckService,
+    private readonly http: HttpHealthIndicator,
+  ) {}
 
   @MessagePattern({ cmd: 'authenticate' })
   async authenticate(@Payload() data: { access_token: string }): Promise<any> {
@@ -33,8 +38,14 @@ export class AuthController {
     return await this.authService.renewAccessToken(access_token, refresh_token);
   }
 
-  @Get('/healthCheck')
-  healthCheck() {
-    return this.authService.healthCheck();
+  @Get()
+  get() {
+    return this.authService.get();
+  }
+
+  @Get('/health')
+  @HealthCheck()
+  check() {
+    return this.health.check([() => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com')]);
   }
 }

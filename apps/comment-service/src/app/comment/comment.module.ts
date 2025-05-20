@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Comment, CommentSchema } from './comment.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommentMapper } from './comment.mapper';
+import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
@@ -40,6 +41,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         inject: [ConfigService],
       },
     ]),
+    TerminusModule,
   ],
   controllers: [CommentController],
   providers: [CommentService, CommentMapper],

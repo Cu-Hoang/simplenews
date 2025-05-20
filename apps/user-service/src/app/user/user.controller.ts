@@ -9,10 +9,15 @@ import {
   RpcRolesGuard,
 } from '@simplenews/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { HealthCheck, HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus';
 
 @Controller()
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly health: HealthCheckService,
+    private readonly http: HttpHealthIndicator,
+  ) {}
 
   @MessagePattern({ cmd: 'register' })
   async create(@Payload() data: CreateUserRequest): Promise<UserResponse> {
@@ -68,8 +73,14 @@ export class UserController {
     return await this.userService.getByIdInternally(id);
   }
 
-  @Get('/healthCheck')
-  healthCheck() {
-    return this.userService.healthCheck();
+  @Get()
+  get() {
+    return this.userService.get();
+  }
+
+  @Get('/health')
+  @HealthCheck()
+  check() {
+    return this.health.check([() => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com')]);
   }
 }

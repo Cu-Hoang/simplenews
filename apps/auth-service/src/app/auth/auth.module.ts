@@ -8,6 +8,8 @@ import { PassportModule } from '@nestjs/passport';
 import { refreshTokenProvider } from '../refresh-token/refresh-token.provider';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenMapper } from '../refresh-token/refresh-token.mapper';
+import { TerminusModule } from '@nestjs/terminus';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { RefreshTokenMapper } from '../refresh-token/refresh-token.mapper';
         secret: configService.get('JWT_SECRET_KEY'),
       }),
     }),
+    TerminusModule,
+    HttpModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, ...refreshTokenProvider, RefreshTokenMapper],

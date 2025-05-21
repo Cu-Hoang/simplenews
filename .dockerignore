@@ -3,7 +3,7 @@ node_modules
 *.log
 .git
 .gitignore
-**/Dockerfile*
+**/Dockerfile**
 **/docker-compose*
 **/.env*
 .github
@@ -12,3 +12,4 @@ sql
 **/README.md
 .verdaccio
 tmp
+helm-charts

@@ -12,9 +12,9 @@ describe('AppService', () => {
     service = app.get<AppService>(AppService);
   });
 
-  describe('healthCheck', () => {
+  describe('get', () => {
     it('should return "Hello API from api gateway"', () => {
-      expect(service.healthCheck()).toEqual({ message: 'Hello API from api gateway' });
+      expect(service.get()).toEqual({ message: 'Hello API from api gateway' });
     });
   });
 });

@@ -12,9 +12,9 @@ describe('ArticleService', () => {
     service = app.get<ArticleService>(ArticleService);
   });
 
-  describe('healthCheck', () => {
+  describe('get', () => {
     it('should return "Hello API from article service"', () => {
-      expect(service.healthCheck()).toEqual({ message: 'Hello API article service' });
+      expect(service.get()).toEqual({ message: 'Hello API article service' });
     });
   });
 });

@@ -1,0 +1,17 @@
+architecture: replicaset
+replicaCount: 3
+
+auth:
+  rootPassword: root
+  username: mongodb
+  password: mongodb
+  database: comment-service
+
+initdbScripts:
+  init.js: |
+    db = db.getSiblingDB("comment-service");
+
+persistence:
+  enabled: true
+  size: 500Mi
+

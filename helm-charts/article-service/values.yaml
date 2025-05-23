@@ -1,0 +1,37 @@
+namespace: dev
+name: article-service
+
+labels:
+  app: article-service
+
+containers:
+  name: article-service
+  image:
+    repository: cuhoang112/article-service
+    tag: 6aca467
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 250m
+    limits:
+      memory: 256Mi
+      cpu: 500m
+  http_port: 3003
+  tcp_port: 4003
+
+service:
+  type: ClusterIP
+  ports:
+    port: 4003
+    targetPort: 4003
+
+configmap:
+  name: article-service
+  data:
+    msa_port: 4003
+    msa_host: 0.0.0.0
+    http_port: 3003
+    api_version: v1
+
+secret:
+  name: article-service

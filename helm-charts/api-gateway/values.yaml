@@ -1,0 +1,43 @@
+namespace: dev
+name: api-gateway
+
+labels:
+  app: api-gateway
+
+containers:
+  name: api-gateway
+  image:
+    repository: cuhoang112/api-gateway
+    tag: 6aca467
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 250m
+    limits:
+      memory: 256Mi
+      cpu: 500m
+  http_port: 3000
+
+service:
+  type: NodePort
+  ports:
+    port: 3000
+    targetPort: 3000
+
+configmap:
+  name: api-gateway
+  data:
+    user_service_host: user-service
+    user_service_port: 4001
+    auth_service_host: auth-service
+    auth_service_port: 4002
+    article_service_host: article-service
+    article_service_port: 4003
+    comment_service_host: comment-service
+    comment_service_port: 4004
+    http_port: 3000
+    api_version: v1
+
+
+
+

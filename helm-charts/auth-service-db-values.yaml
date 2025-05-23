@@ -1,0 +1,23 @@
+auth:
+  username: postgresql
+  password: postgresql
+  database: auth-service
+  postgresPassword: root
+
+primary:
+  persistence:
+    enabled: true
+    size: 500Mi
+
+  initdb:
+    scripts:
+      init.sql: |
+        CREATE TABLE IF NOT EXISTS "refresh_token" (
+          id UUID PRIMARY KEY,
+          user_id UUID NOT NULL,
+          jti UUID NOT NULL,
+          device TEXT NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          expires_at TIMESTAMP NOT NULL
+        );    

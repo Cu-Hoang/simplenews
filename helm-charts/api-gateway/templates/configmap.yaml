@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.configmap.name }}
+data:
+  USER_SERVICE_HOST: {{ .Values.configmap.data.user_service_host | quote }}
+  USER_SERVICE_PORT: {{ .Values.configmap.data.user_service_port | quote }}
+  AUTH_SERVICE_HOST: {{ .Values.configmap.data.auth_service_host | quote }}
+  AUTH_SERVICE_PORT: {{ .Values.configmap.data.auth_service_port | quote }}
+  ARTICLE_SERVICE_HOST: {{ .Values.configmap.data.article_service_host | quote }}
+  ARTICLE_SERVICE_PORT: {{ .Values.configmap.data.auth_service_port | quote }}
+  COMMENT_SERVICE_HOST: {{ .Values.configmap.data.comment_service_host | quote }}
+  COMMENT_SERVICE_PORT: {{ .Values.configmap.data.comment_service_port | quote }}
+  HTTP_PORT: {{ .Values.configmap.data.http_port | quote }}
+  API_VERSION: {{ .Values.configmap.data.api_version | quote }}

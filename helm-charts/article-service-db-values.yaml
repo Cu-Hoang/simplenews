@@ -1,0 +1,17 @@
+architecture: replicaset
+replicaCount: 3
+
+auth:
+  rootPassword: root
+  username: mongodb
+  password: mongodb
+  database: article-service
+
+initdbScripts:
+  init.js: |
+    db = db.getSiblingDB("article-service");
+
+persistence:
+  enabled: true
+  size: 500Mi
+

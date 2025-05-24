@@ -20,8 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v5.2.0
@@ -29,7 +27,6 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
           args: >
-            -Dsonar.projectKey=ng
+            -Dsonar.projectKey=Cu-Hoang_simplenews
             -Dsonar.organization=cungochoang
-            -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.exclusions=apps/user-service,apps/article-service,apps/auth-service,apps/comment-service,apps/user-service-e2e,apps/api-gateway-e2e,apps/article-service-e2e,apps/auth-service-e2e,apps/comment-service-e2e

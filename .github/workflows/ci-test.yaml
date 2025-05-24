@@ -74,6 +74,7 @@ jobs:
             SERVICE=api-gateway
             HTTP_PORT=3000
           push: false
+          load: true
           tags: |
             api-gateway:${{ steps.get_sha.outputs.sha }}
       

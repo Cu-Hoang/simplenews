@@ -30,7 +30,7 @@ async function bootstrap() {
   const httpPort = Number(process.env.HTTP_PORT ?? 3000);
   app.use(cookieParser());
   await app.listen(httpPort);
-  Logger.log(`🚀 App1 is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}`);
+  Logger.log(`🚀 App is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}`);
 }
 
 bootstrap();

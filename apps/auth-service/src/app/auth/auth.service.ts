@@ -63,7 +63,7 @@ export class AuthService {
     const savedRefreshToken = this.refreshTokenMapper.toRefreshToken(
       user.id,
       jti,
-      Date.now() + this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION'),
+      new Date(Date.now() + Number(this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION'))),
       'device_id',
     );
     this.refreshTokenRepository.save(savedRefreshToken);
@@ -73,11 +73,11 @@ export class AuthService {
         roles: user.roles,
         premium: user.premium,
       },
-      { expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION') },
+      { expiresIn: Number(this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION')) },
     );
     const refreshToken = await this.jwtService.sign(
       { jti },
-      { expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION') },
+      { expiresIn: Number(this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION')) },
     );
     return {
       accessToken,
@@ -121,11 +121,11 @@ export class AuthService {
           roles: user.roles,
           premium: user.premium,
         },
-        { expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION') },
+        { expiresIn: Number(this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION')) },
       );
       const refreshToken = await this.jwtService.sign(
         { jti: newJti },
-        { expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION') },
+        { expiresIn: Number(this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION')) },
       );
       return {
         accessToken,

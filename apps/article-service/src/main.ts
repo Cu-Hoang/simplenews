@@ -22,9 +22,7 @@ async function bootstrap() {
   const httpPort = Number(process.env.HTTP_PORT ?? 3003);
   await app.startAllMicroservices();
   await app.listen(httpPort);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}`,
-  );
+  Logger.log(`🚀 App is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}`);
 }
 
 bootstrap();

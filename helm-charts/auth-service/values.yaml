@@ -1,14 +1,12 @@
 namespace: dev
 name: auth-service
-
 labels:
   app: auth-service
-
 containers:
   name: auth-service
   image:
     repository: cuhoang112/auth-service
-    tag: 6aca467
+    tag: 9cee337
   resources:
     requests:
       memory: 128Mi
@@ -18,13 +16,11 @@ containers:
       cpu: 500m
   http_port: 3002
   tcp_port: 4002
-
 service:
   type: ClusterIP
   ports:
     port: 4002
     targetPort: 4002
-
 configmap:
   name: auth-service
   data:
@@ -37,6 +33,5 @@ configmap:
     user_service_port: "4001"
     http_port: "3002"
     api_version: v1
-
 secret:
   name: auth-service

@@ -80,7 +80,7 @@ jobs:
       - name: Trivy image scan
         uses: aquasecurity/trivy-action@0.30.0
         with:
-          image-ref: '${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ steps.get_sha.outputs.sha }}'
+          image-ref: 'api-gateway:${{ steps.get_sha.outputs.sha }}'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true

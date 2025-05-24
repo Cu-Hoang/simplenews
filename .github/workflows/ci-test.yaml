@@ -31,5 +31,5 @@ jobs:
           args: >
             -Dsonar.projectKey=ng
             -Dsonar.organization=cungochoang
-            -Dsonar.branch.name=${{ github.head_ref || github.ref_name }}
+            -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.exclusions=apps/user-service,apps/article-service,apps/auth-service,apps/comment-service,apps/user-service-e2e,apps/api-gateway-e2e,apps/article-service-e2e,apps/auth-service-e2e,apps/comment-service-e2e

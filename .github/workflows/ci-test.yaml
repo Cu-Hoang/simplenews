@@ -2,9 +2,9 @@ name: ci-api-gateway
 on:
   workflow_dispatch:
 
-  push:
+  pull_request:
     branches:
-      - feature/**
+      - main
     paths:
       - .github/workflows/**
 

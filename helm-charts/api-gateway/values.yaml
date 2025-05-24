@@ -1,14 +1,12 @@
 namespace: dev
 name: api-gateway
-
 labels:
   app: api-gateway
-
 containers:
   name: api-gateway
   image:
     repository: cuhoang112/api-gateway
-    tag: 6aca467
+    tag: 162be78
   resources:
     requests:
       memory: 128Mi
@@ -17,13 +15,11 @@ containers:
       memory: 256Mi
       cpu: 500m
   http_port: 3000
-
 service:
   type: NodePort
   ports:
     port: 3000
     targetPort: 3000
-
 configmap:
   name: api-gateway
   data:
@@ -37,7 +33,3 @@ configmap:
     comment_service_port: 4004
     http_port: 3000
     api_version: v1
-
-
-
-

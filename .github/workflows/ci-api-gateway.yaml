@@ -58,11 +58,23 @@ jobs:
         npx nx sync
         npx nx build common
         npx nx build api-gateway
+  
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v5.2.0
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+          args: >
+            -Dsonar.projectKey=Cu-Hoang_simplenews
+            -Dsonar.organization=ng
+            -Dsonar.exclusions=apps/user-service,apps/article-service,apps/auth-service,apps/comment-service,apps/user-service-e2e,apps/api-gateway-e2e,apps/article-service-e2e,apps/auth-service-e2e,apps/comment-service-e2e
 
   docker:
     if: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main' }}
     needs: build-test
     runs-on: ubuntu-latest
+    outputs:
+      image_sha: ${{ steps.get_sha.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,13 +91,22 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Trivy FS scan
+        uses: aquasecurity/trivy-action@0.30.0
+        with:
+          scan-type: 'fs'
+          scan-ref: './apps/api-gateway'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+
       - name: Get SHA 
         id: get_sha
         run: |
           SHA=$(git log -n 1 --pretty=format:%h -- apps/api-gateway)
           echo "sha=$SHA" >> $GITHUB_OUTPUT
 
-      - name: Build and push
+      - name: Build image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -93,7 +114,50 @@ jobs:
           build-args: |
             SERVICE=api-gateway
             HTTP_PORT=3000
-          push: true
+          push: false
+          load: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ steps.get_sha.outputs.sha }}
             ${{ secrets.DOCKER_USERNAME }}/api-gateway:main
+
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@0.30.0
+        with:
+          image-ref: '${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ steps.get_sha.outputs.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Push image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ steps.get_sha.outputs.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:main
+
+  update-values:
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main' }}
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install yq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yq
+
+      - name: Update Helm values
+        run: |
+          yq eval '.containers.image.tag = "${{ needs.docker.outputs.image_sha }}"' -i helm-charts/api-gateway/values.yaml
+
+      - name: Create Pull Request with updated values.yaml
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: 'chore: update image tag in values.yaml of api-gateway'
+          branch: update-values-${{ needs.docker.outputs.image_sha }}
+          base: main
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>

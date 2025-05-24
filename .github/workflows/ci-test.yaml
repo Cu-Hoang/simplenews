@@ -1,0 +1,63 @@
+name: ci-api-gateway
+on:
+  workflow_dispatch:
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/**
+
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ['22.14.0']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version}}
+        cache: npm
+
+    - name: Check Node.js version
+      run: |
+        node_version=$(node --version | sed 's/v//')
+        required_version=$(node -p "require('./package.json').engines.node")
+        if [[ ! "$node_version" == "$required_version" ]]; then
+          echo "Error: Node.js version $node_version does not match required version $required_version"
+          exit 1
+        fi
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Lint code
+      run: npm run lint
+
+    - name: Check security vulnerabilities
+      run: npm audit --audit-level=high
+
+    - name: Build project
+      run: |
+        npx nx sync
+        npx nx build common
+        npx nx build api-gateway
+  
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v5.2.0
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+          args: >
+            -Dsonar.projectKey=ng
+            -Dsonar.organization=cungochoang
+            -Dsonar.sources=.
+            -Dsonar.exclusions=apps/user-service,apps/article-service,apps/auth-service,apps/comment-service,apps/user-service-e2e,apps/api-gateway-e2e,apps/article-service-e2e,apps/auth-service-e2e,apps/comment-service-e2e

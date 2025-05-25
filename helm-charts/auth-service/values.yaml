@@ -29,14 +29,14 @@ service:
 configmap:
   name: auth-service
   data:
-    postgres_host: "auth-service-db-postgresql"
-    postgres_port: "5432"
-    postgres_db_name: "auth-service"
-    msa_port: "4002"
-    msa_host: "0.0.0.0"
-    user_service_host: "user-service"
-    user_service_port: "4001"
-    http_port: "3002"
+    postgres_host: auth-service-db-postgresql
+    postgres_port: 5432
+    postgres_db_name: auth-service
+    msa_port: 4002
+    msa_host: 0.0.0.0
+    user_service_host: user-service
+    user_service_port: 4001
+    http_port: 3002
     api_version: v1
 
 secret:

@@ -6,7 +6,7 @@ containers:
   name: article-service
   image:
     repository: cuhoang112/article-service
-    tag: 69d8f09
+    tag: 61afd2b
   resources:
     requests:
       memory: 128Mi

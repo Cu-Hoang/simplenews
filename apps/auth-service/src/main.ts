@@ -23,7 +23,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
   await app.listen(httpPort);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}`,
+    `🚀 auth-service is running on: http://localhost:${httpPort}/${globalPrefix}/${apiVersion}`,
   );
 }
 

@@ -161,7 +161,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull origin ${{ github.head_ref }} --rebase
           git add helm-charts/article-service/values.yaml
           git commit -m "chore: update image tag in values.yaml for article-service to ${{ needs.docker.outputs.image_sha }}"
           git push origin HEAD:${{ github.head_ref }}

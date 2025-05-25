@@ -1,7 +1,10 @@
 namespace: dev
+
 name: user-service
+
 labels:
   app: user-service
+
 containers:
   name: user-service
   image:
@@ -16,11 +19,13 @@ containers:
       cpu: 500m
   http_port: 3001
   tcp_port: 4001
+
 service:
   type: ClusterIP
   ports:
     port: 4001
     targetPort: 4001
+
 configmap:
   name: user-service
   data:
@@ -31,5 +36,6 @@ configmap:
     msa_host: "0.0.0.0"
     http_port: "3001"
     api_version: v1
+
 secret:
   name: user-service

@@ -1,7 +1,10 @@
 namespace: dev
+
 name: api-gateway
+
 labels:
   app: api-gateway
+
 containers:
   name: api-gateway
   image:
@@ -15,11 +18,13 @@ containers:
       memory: 256Mi
       cpu: 500m
   http_port: 3000
+
 service:
   type: NodePort
   ports:
     port: 3000
     targetPort: 3000
+
 configmap:
   name: api-gateway
   data:

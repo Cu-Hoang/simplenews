@@ -1,7 +1,10 @@
 namespace: dev
+
 name: comment-service
+
 labels:
   app: comment-service
+
 containers:
   name: comment-service
   image:
@@ -16,11 +19,13 @@ containers:
       cpu: 500m
   http_port: 3004
   tcp_port: 4004
+
 service:
   type: ClusterIP
   ports:
     port: 4004
     targetPort: 4004
+
 configmap:
   name: comment-service
   data:
@@ -31,5 +36,6 @@ configmap:
     http_port: "3004"
     model_url: "http://predict-service:8000/predict"
     api_version: v1
+
 secret:
   name: comment-service

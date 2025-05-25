@@ -43,7 +43,7 @@ spec:
           failureThreshold: 3
         envFrom:
         - configMapRef:
-            name: {{ .Values.configmap.name}}
+            name: {{ .Values.configmap.name }}
         ports:
         - name: http
           containerPort: {{ .Values.containers.http_port }}

@@ -43,9 +43,9 @@ spec:
           failureThreshold: 3
         envFrom:
         - configMapRef:
-            name: {{ .Values.configmap.name}}
+            name: {{ .Values.configmap.name }}
         - secretRef:
-            name: {{ .Values.secret.name}}
+            name: {{ .Values.secret.name }}
         ports:
         - name: http
           containerPort: {{ .Values.containers.http_port }}

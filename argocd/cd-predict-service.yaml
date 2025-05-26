@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Cu-Hoang/simplenews.git
+    repoURL: https://github.com/Friederi/IE403.P21-NLPmodel.git
     targetRevision: main
     path: helm-charts/predict-service
     helm:

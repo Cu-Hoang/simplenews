@@ -8,7 +8,7 @@ containers:
   name: bert-fastapi
   image:
     repository: freiderich/bert-fastapi-image
-    tag: 1.0.4
+    tag: 31346b2431b3762d0ec0208799ccf06854df044d
   resources:
     requests:
       memory: 2Gi

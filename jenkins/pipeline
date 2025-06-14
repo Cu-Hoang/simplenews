@@ -75,7 +75,7 @@ pipeline {
         sh '''
         which trivy
         trivy --version
-        trivy fs "./apps/api-gateway" --exit-code 1 --severity CRITICAL,HIGH --format table
+        trivy filesystem --exit-code 1 --severity CRITICAL,HIGH --format table "./apps/api-gateway"
         '''
       }
     }

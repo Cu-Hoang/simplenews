@@ -10,6 +10,10 @@ pipeline {
     skipStagesAfterUnstable()
   }
 
+  tools {
+    nodejs 'NodeJS'
+  }
+
   stages {
     stage('Checkout') {
       steps {
@@ -17,22 +21,6 @@ pipeline {
         script {
           env.IMAGE_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
           echo "IMAGE_SHA=${env.IMAGE_SHA}"
-        }
-      }
-    }
-
-    stage('Debug Changes') {
-      steps {
-        script {
-          def changeLogSets = currentBuild.changeSets
-          for (changeLog in changeLogSets) {
-            for (entry in changeLog.items) {
-              echo "Commit ${entry.commitId} by ${entry.author}:"
-              for (file in entry.affectedFiles) {
-                echo " - ${file.editType.name}: ${file.path}"
-              }
-            }
-          }
         }
       }
     }

@@ -10,10 +10,6 @@ pipeline {
     skipStagesAfterUnstable()
   }
 
-  tools {
-    nodejs '22.14.0'
-  }
-
   stages {
     stage('Checkout') {
       steps {

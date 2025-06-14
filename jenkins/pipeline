@@ -52,9 +52,11 @@ pipeline {
       when {
         changeset 'jenkins/pipeline'
       }
+      environment {
+        scannerHome = tool 'SonarQube Scanner'
+      }
       steps {
         withSonarQubeEnv('SonarQubeServer') {
-          def scannerHome = tool 'SonarQube Scanner'
           sh """
             ${scannerHome}/bin/sonar-scanner \
               -Dsonar.projectKey=Cu-Hoang_simplenews \

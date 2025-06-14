@@ -12,7 +12,6 @@ pipeline {
 
   tools {
     nodejs 'NodeJs'
-    sonarRunner 'SonarQube Scanner'
   }
 
   stages {

@@ -54,8 +54,9 @@ pipeline {
       }
       steps {
         withSonarQubeEnv('SonarQubeServer') {
+          def scannerHome = tool 'SonarQube Scanner'
           sh """
-            sonar-scanner \
+            ${scannerHome}/bin/sonar-scanner \
               -Dsonar.projectKey=Cu-Hoang_simplenews \
               -Dsonar.organization=ng \
               -Dsonar.sources=. \

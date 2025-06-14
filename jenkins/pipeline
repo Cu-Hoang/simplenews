@@ -72,12 +72,12 @@ pipeline {
         changeset 'jenkins/pipeline'
       }
       steps {
-        sh """
+        sh '''
         echo "Current directory: $(pwd)"
         echo "Listing files in directory:"
         ls -la
         trivy fs ./apps/api-gateway --exit-code 1 --severity CRITICAL,HIGH --format table
-        """
+        '''
       }
     }
 

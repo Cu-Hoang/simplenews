@@ -1,0 +1,122 @@
+pipeline {
+  agent any
+
+  environment {
+    SONAR_TOKEN = credentials('sonar-token')
+    DOCKER_CREDENTIALS = credentials('docker-credentials')
+  }
+
+  options {
+    skipStagesAfterUnstable()
+  }
+
+  tools {
+    nodejs '22.14.0'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+        script {
+          env.IMAGE_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+          echo "IMAGE_SHA=${env.IMAGE_SHA}"
+        }
+      }
+    }
+
+    stage('Install & Lint') {
+      when {
+        changeset 'jenkins/pipeline'
+      }
+      steps {
+        sh 'npm ci'
+        sh 'npm run lint'
+        sh 'npm audit --audit-level=high || true'
+      }
+    }
+
+    stage('Build') {
+      when {
+        changeset 'jenkins/pipeline'
+      }
+      steps {
+        sh 'npx nx sync'
+        sh 'npx nx build common'
+        sh 'npx nx build api-gateway'
+      }
+    }
+
+    stage('SonarQube') {
+      when {
+        changeset 'jenkins/pipeline'
+      }
+      steps {
+        withSonarQubeEnv('SonarQubeServer') {
+          sh """
+            sonar-scanner \
+              -Dsonar.projectKey=Cu-Hoang_simplenews \
+              -Dsonar.organization=ng \
+              -Dsonar.sources=. \
+              -Dsonar.exclusions=apps/user-service/**,apps/article-service/**,apps/auth-service/**,apps/comment-service/**,apps/user-service-e2e/**,apps/api-gateway-e2e/**,apps/article-service-e2e/**,apps/auth-service-e2e/**,apps/comment-service-e2e/** \
+              -Dsonar.login=$SONAR_TOKEN
+          """
+        }
+      }
+    }
+
+    stage('Trivy FS scan') {
+      when {
+        changeset 'jenkins/pipeline'
+      }
+      steps {
+        sh 'trivy fs ./apps/api-gateway --exit-code 1 --severity CRITICAL,HIGH --format table'
+      }
+    }
+
+    stage('Build, Scan & Push Docker Image') {
+      when {
+        allOf {
+          branch 'main'
+          changeset 'apps/api-gateway/**'
+        }
+      }
+      steps {
+        sh """
+          echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin
+          docker build -f Dockerfile.dockerfile \\
+            --build-arg SERVICE=api-gateway \\
+            --build-arg HTTP_PORT=3000 \\
+            -t $DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA .
+          docker tag $DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA $DOCKER_CREDENTIALS_USR/api-gateway:main
+        """
+
+        sh "trivy image $DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA --exit-code 1 --format table --ignore-unfixed --vuln-type os,library"
+
+        sh """
+          docker push $DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA
+          docker push $DOCKER_CREDENTIALS_USR/api-gateway:main
+        """
+      }
+    }
+
+    stage('Update Helm values') {
+      when {
+        allOf {
+          branch 'main'
+          changeset 'jenkins/pipeline'
+        }
+      }
+      steps {
+        sh """
+          yq -i '.containers.image.tag = "$IMAGE_SHA"' helm-charts/api-gateway/values.yaml
+          git config user.name "jenkins"
+          git config user.email "jenkins@localhost"
+          git add helm-charts/api-gateway/values.yaml
+          git commit -m "chore: update image tag in values.yaml for api-gateway to $IMAGE_SHA" || echo "No changes to commit"
+          git push origin HEAD:${BRANCH_NAME}
+        """
+      }
+    }
+  }
+}

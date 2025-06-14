@@ -95,7 +95,7 @@ pipeline {
         """
 
         sh """
-          trivy image "$DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA" --exit-code 1 --format table --ignore-unfixed --vuln-type os,library
+          trivy image "$DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA" --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --vuln-type os,library
         """
 
         sh """

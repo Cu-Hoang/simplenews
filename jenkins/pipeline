@@ -20,7 +20,7 @@ pipeline {
         script {
           env.IMAGE_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
           echo "IMAGE_SHA=${env.IMAGE_SHA}"
-          echo "test12"
+          echo "test"
         }
       }
     }

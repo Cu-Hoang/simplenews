@@ -94,7 +94,9 @@ pipeline {
           docker tag $DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA $DOCKER_CREDENTIALS_USR/api-gateway:main
         """
 
-        sh "trivy image $DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA --exit-code 1 --format table --ignore-unfixed --vuln-type os,library"
+        sh """
+          trivy image "$DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA" --exit-code 1 --format table --ignore-unfixed --vuln-type os,library
+        """
 
         sh """
           docker push $DOCKER_CREDENTIALS_USR/api-gateway:$IMAGE_SHA

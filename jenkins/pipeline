@@ -82,9 +82,7 @@ pipeline {
 
     stage('Build, Scan & Push Docker Image') {
       when {
-        allOf {
-          changeset 'jenkins/pipeline'
-        }
+        changeset 'jenkins/pipeline'
       }
       steps {
         sh """
@@ -109,21 +107,20 @@ pipeline {
 
     stage('Update Helm values') {
       when {
-        allOf {
-          expression { return env.CHANGE_ID != null }
-          expression { return env.CHANGE_BRANCH == "dev" }
-          expression { return env.CHANGE_TARGET == "main" }
-        }
+        changeset 'jenkins/pipeline'
       }
       steps {
-        sh """
-          yq -i '.containers.image.tag = "$IMAGE_SHA"' helm-charts/api-gateway/values.yaml
-          git config user.name "jenkins"
-          git config user.email "jenkins@localhost"
-          git add helm-charts/api-gateway/values.yaml
-          git commit -m "chore: update image tag in values.yaml for api-gateway to $IMAGE_SHA" || echo "No changes to commit"
-          git push origin HEAD:${BRANCH_NAME}
-        """
+        withCredentials([usernamePassword(credentialsId: 'github-simplenews', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+          sh """
+            yq -i '.containers.image.tag = "$IMAGE_SHA"' helm-charts/api-gateway/values.yaml
+            git config user.name "jenkins"
+            git config user.email "jenkins@localhost"
+            git add helm-charts/api-gateway/values.yaml
+            git commit -m "chore: update image tag in values.yaml for api-gateway to $IMAGE_SHA" || echo "No changes to commit"
+
+            git push https://${GIT_USER}:${GIT_TOKEN}@github.com/Cu-Hoang/simplenews.git HEAD:${BRANCH_NAME}
+          """
+        }
       }
     }
   }

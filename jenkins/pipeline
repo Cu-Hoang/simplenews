@@ -82,7 +82,12 @@ pipeline {
 
     stage('Build, Scan & Push Docker Image') {
       when {
-        changeset 'jenkins/pipeline'
+        allOf {
+          expression { return env.CHANGE_ID }
+          expression { return env.CHANGE_BRANCH == "main" }
+          expression { return env.CHANGE_TARGET == "dev" }
+          changeset 'jenkins/pipeline'
+        }
       }
       steps {
         sh """
@@ -108,7 +113,9 @@ pipeline {
     stage('Update Helm values') {
       when {
         allOf {
-          branch 'main'
+          expression { return env.CHANGE_ID }
+          expression { return env.CHANGE_BRANCH == "main" }
+          expression { return env.CHANGE_TARGET == "dev" }
           changeset 'jenkins/pipeline'
         }
       }

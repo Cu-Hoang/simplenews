@@ -20,14 +20,13 @@ pipeline {
         script {
           env.IMAGE_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
           echo "IMAGE_SHA=${env.IMAGE_SHA}"
-          echo "test1"
         }
       }
     }
 
     stage('Install & Lint') {
       when {
-        changeset 'jenkins/pipeline'
+        changeset 'apps/api-gateway/**'
       }
       steps {
         sh 'npm ci'
@@ -38,7 +37,7 @@ pipeline {
 
     stage('Build') {
       when {
-        changeset 'jenkins/pipeline'
+        changeset 'apps/api-gateway/**'
       }
       steps {
         sh 'npx nx sync'
@@ -49,7 +48,7 @@ pipeline {
 
     stage('SonarQube') {
       when {
-        changeset 'jenkins/pipeline'
+        changeset 'apps/api-gateway/**'
       }
       environment {
         scannerHome = tool 'SonarQube Scanner'
@@ -69,7 +68,7 @@ pipeline {
 
     stage('Trivy FS scan') {
       when {
-        changeset 'jenkins/pipeline'
+        changeset 'apps/api-gateway/**'
       }
       steps {
         sh '''
@@ -82,9 +81,7 @@ pipeline {
 
     stage('Build, Scan & Push Docker Image') {
       when {
-        allOf {
-          changeset 'jenkins/pipeline'
-        }
+        changeset 'apps/api-gateway/**'
       }
       steps {
         sh """
@@ -109,21 +106,20 @@ pipeline {
 
     stage('Update Helm values') {
       when {
-        allOf {
-          expression { return env.CHANGE_ID != null }
-          expression { return env.CHANGE_BRANCH == "dev" }
-          expression { return env.CHANGE_TARGET == "main" }
-        }
+        changeset 'apps/api-gateway/**'
       }
       steps {
-        sh """
-          yq -i '.containers.image.tag = "$IMAGE_SHA"' helm-charts/api-gateway/values.yaml
-          git config user.name "jenkins"
-          git config user.email "jenkins@localhost"
-          git add helm-charts/api-gateway/values.yaml
-          git commit -m "chore: update image tag in values.yaml for api-gateway to $IMAGE_SHA" || echo "No changes to commit"
-          git push origin HEAD:${BRANCH_NAME}
-        """
+        withCredentials([usernamePassword(credentialsId: 'github-simplenews', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+          sh """
+            yq -i '.containers.image.tag = "$IMAGE_SHA"' helm-charts/api-gateway/values.yaml
+            git config user.name "jenkins"
+            git config user.email "jenkins@localhost"
+            git add helm-charts/api-gateway/values.yaml
+            git commit -m "chore: update image tag in values.yaml for api-gateway to $IMAGE_SHA" || echo "No changes to commit"
+
+            git push https://${GIT_USER}:${GIT_TOKEN}@github.com/Cu-Hoang/simplenews.git HEAD:${BRANCH_NAME}
+          """
+        }
       }
     }
   }

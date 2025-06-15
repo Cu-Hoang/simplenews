@@ -80,23 +80,9 @@ pipeline {
       }
     }
 
-    stage('Debug Info') {
-      steps {
-        script {
-          echo "CHANGE_ID: ${env.CHANGE_ID}"
-          echo "CHANGE_BRANCH: ${env.CHANGE_BRANCH}"
-          echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
-          echo "BRANCH_NAME: ${env.BRANCH_NAME}"
-        }
-      }
-    }
-
     stage('Build, Scan & Push Docker Image') {
       when {
         allOf {
-          expression { return env.CHANGE_ID != null }
-          expression { return env.CHANGE_BRANCH == "dev" }
-          expression { return env.CHANGE_TARGET == "main" }
           changeset 'jenkins/pipeline'
         }
       }
@@ -127,7 +113,6 @@ pipeline {
           expression { return env.CHANGE_ID != null }
           expression { return env.CHANGE_BRANCH == "dev" }
           expression { return env.CHANGE_TARGET == "main" }
-          changeset 'jenkins/pipeline'
         }
       }
       steps {
